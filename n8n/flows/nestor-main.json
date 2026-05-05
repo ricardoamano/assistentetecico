@@ -1,0 +1,517 @@
+{
+  "name": "NESTOR — Fluxo Principal",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nestor-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "node_webhook",
+      "name": "1. Webhook — Evolution API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "nestor-main"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "messageType",
+              "value": "={{ $json.body.data.messageType ?? $json.body.data.message?.audioMessage ? 'AUDIO' : 'TEXT' }}",
+              "type": "string"
+            },
+            {
+              "name": "senderPhone",
+              "value": "={{ $json.body.data.key.remoteJid.replace('@s.whatsapp.net', '') }}",
+              "type": "string"
+            },
+            {
+              "name": "instanceName",
+              "value": "={{ $json.body.instance }}",
+              "type": "string"
+            },
+            {
+              "name": "rawMessage",
+              "value": "={{ $json.body.data.message?.conversation ?? $json.body.data.message?.extendedTextMessage?.text ?? '' }}",
+              "type": "string"
+            },
+            {
+              "name": "audioUrl",
+              "value": "={{ $json.body.data.message?.audioMessage?.url ?? '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_extract",
+      "name": "2. Extrair dados da mensagem",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": false },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.messageType }}",
+                    "rightValue": "AUDIO",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "output": 0
+            }
+          ],
+          "fallbackOutput": 1
+        }
+      },
+      "id": "node_switch_type",
+      "name": "3. Switch — Tipo de mensagem",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/audio/transcriptions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $credentials.openAiApiKey }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            { "name": "model", "value": "whisper-1" },
+            { "name": "language", "value": "pt" },
+            { "name": "file", "value": "={{ $json.audioUrl }}", "parameterType": "formBinaryData" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_whisper",
+      "name": "4a. OpenAI Whisper — Transcrição",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180],
+      "credentials": { "httpHeaderAuth": { "id": "openai_key", "name": "OpenAI API Key" } }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "processedMessage",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_set_transcription",
+      "name": "4b. Salvar transcrição",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 180]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "processedMessage",
+              "value": "={{ $json.rawMessage }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_set_text",
+      "name": "4c. Mensagem de texto",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 420]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/authorized_users",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_KEY }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "phone", "value": "=eq.{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}" },
+            { "name": "active", "value": "=eq.true" },
+            { "name": "select", "value": "id,name,role" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_auth_check",
+      "name": "5. Supabase — Verificar autorização",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": false },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_if_authorized",
+      "name": "6. IF — Autorizado?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $('2. Extrair dados da mensagem').item.json.instanceName }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.EVOLUTION_API_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}\",\n  \"text\": \"Oi, não reconheço seu número aqui. Fala com o Amano para liberar seu acesso. 👋\"\n}",
+        "options": {}
+      },
+      "id": "node_unauthorized_msg",
+      "name": "7a. Enviar — Não autorizado",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "userName",
+              "value": "={{ $json[0].name }}",
+              "type": "string"
+            },
+            {
+              "name": "userRole",
+              "value": "={{ $json[0].role }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_set_user",
+      "name": "7b. Salvar dados do usuário",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1780, 180]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/conversation_history",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_KEY }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "phone", "value": "=eq.{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}" },
+            { "name": "order", "value": "created_at.desc" },
+            { "name": "limit", "value": "10" },
+            { "name": "select", "value": "role,content" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_get_history",
+      "name": "8. Supabase — Buscar histórico (10 msgs)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2000, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 100,\n  \"system\": \"Você é um classificador de intenções. Analise a mensagem e retorne APENAS uma das seguintes palavras: SUPORTE_TECNICO, AGENDA, ESCALACAO ou FALLBACK.\\n\\nRegras:\\n- SUPORTE_TECNICO: dúvida técnica, equipamento, instalação, falha, configuração\\n- AGENDA: eventos, programação, datas, quando é, que horas\\n- ESCALACAO: quem vai, técnico escalado, quem é responsável\\n- FALLBACK: qualquer outra coisa\\n\\nRetorne SOMENTE a palavra, sem explicação.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('2. Extrair dados da mensagem').item.json.processedMessage ?? $('4b. Salvar transcrição').item.json.processedMessage }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node_classify_intent",
+      "name": "9. Claude — Classificar intenção",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 180]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.content[0].text.trim() }}",
+                    "rightValue": "SUPORTE_TECNICO",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "output": 0
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.content[0].text.trim() }}",
+                    "rightValue": "AGENDA",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "output": 1
+            },
+            {
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.content[0].text.trim() }}",
+                    "rightValue": "ESCALACAO",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              },
+              "output": 2
+            }
+          ],
+          "fallbackOutput": 3
+        }
+      },
+      "id": "node_switch_intent",
+      "name": "10. Switch — Roteamento de intenção",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [2440, 180]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "finalResponse",
+              "value": "Não entendi bem. Pode repetir? Posso te ajudar com: suporte técnico, agenda ou escalação.",
+              "type": "string"
+            },
+            {
+              "name": "intent",
+              "value": "FALLBACK",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_fallback",
+      "name": "11d. Fallback",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2660, 480]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/conversation_history",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=[\n  {\n    \"phone\": \"{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}\",\n    \"role\": \"user\",\n    \"content\": \"{{ $('2. Extrair dados da mensagem').item.json.processedMessage }}\"\n  },\n  {\n    \"phone\": \"{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}\",\n    \"role\": \"assistant\",\n    \"content\": \"{{ $json.finalResponse }}\"\n  }\n]",
+        "options": {}
+      },
+      "id": "node_save_history",
+      "name": "12. Supabase — Salvar histórico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2880, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/audit_log",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}\",\n  \"intent\": \"{{ $json.intent }}\",\n  \"input\": \"{{ $('2. Extrair dados da mensagem').item.json.processedMessage }}\",\n  \"output\": \"{{ $json.finalResponse }}\"\n}",
+        "options": {}
+      },
+      "id": "node_audit_log",
+      "name": "13. Supabase — Salvar audit_log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3100, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.EVOLUTION_API_URL }}/message/sendText/{{ $('2. Extrair dados da mensagem').item.json.instanceName }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.EVOLUTION_API_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('2. Extrair dados da mensagem').item.json.senderPhone }}\",\n  \"text\": \"{{ $json.finalResponse }}\"\n}",
+        "options": {}
+      },
+      "id": "node_send_response",
+      "name": "14. Evolution API — Enviar resposta",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3320, 300]
+    }
+  ],
+  "connections": {
+    "1. Webhook — Evolution API": {
+      "main": [[{ "node": "2. Extrair dados da mensagem", "type": "main", "index": 0 }]]
+    },
+    "2. Extrair dados da mensagem": {
+      "main": [[{ "node": "3. Switch — Tipo de mensagem", "type": "main", "index": 0 }]]
+    },
+    "3. Switch — Tipo de mensagem": {
+      "main": [
+        [{ "node": "4a. OpenAI Whisper — Transcrição", "type": "main", "index": 0 }],
+        [{ "node": "4c. Mensagem de texto", "type": "main", "index": 0 }]
+      ]
+    },
+    "4a. OpenAI Whisper — Transcrição": {
+      "main": [[{ "node": "4b. Salvar transcrição", "type": "main", "index": 0 }]]
+    },
+    "4b. Salvar transcrição": {
+      "main": [[{ "node": "5. Supabase — Verificar autorização", "type": "main", "index": 0 }]]
+    },
+    "4c. Mensagem de texto": {
+      "main": [[{ "node": "5. Supabase — Verificar autorização", "type": "main", "index": 0 }]]
+    },
+    "5. Supabase — Verificar autorização": {
+      "main": [[{ "node": "6. IF — Autorizado?", "type": "main", "index": 0 }]]
+    },
+    "6. IF — Autorizado?": {
+      "main": [
+        [{ "node": "7b. Salvar dados do usuário", "type": "main", "index": 0 }],
+        [{ "node": "7a. Enviar — Não autorizado", "type": "main", "index": 0 }]
+      ]
+    },
+    "7b. Salvar dados do usuário": {
+      "main": [[{ "node": "8. Supabase — Buscar histórico (10 msgs)", "type": "main", "index": 0 }]]
+    },
+    "8. Supabase — Buscar histórico (10 msgs)": {
+      "main": [[{ "node": "9. Claude — Classificar intenção", "type": "main", "index": 0 }]]
+    },
+    "9. Claude — Classificar intenção": {
+      "main": [[{ "node": "10. Switch — Roteamento de intenção", "type": "main", "index": 0 }]]
+    },
+    "10. Switch — Roteamento de intenção": {
+      "main": [
+        [{ "node": "SUB: nestor-suporte (conectar aqui)", "type": "main", "index": 0 }],
+        [{ "node": "SUB: nestor-agenda (conectar aqui)", "type": "main", "index": 0 }],
+        [{ "node": "SUB: nestor-escalacao (conectar aqui)", "type": "main", "index": 0 }],
+        [{ "node": "11d. Fallback", "type": "main", "index": 0 }]
+      ]
+    },
+    "11d. Fallback": {
+      "main": [[{ "node": "12. Supabase — Salvar histórico", "type": "main", "index": 0 }]]
+    },
+    "12. Supabase — Salvar histórico": {
+      "main": [[{ "node": "13. Supabase — Salvar audit_log", "type": "main", "index": 0 }]]
+    },
+    "13. Supabase — Salvar audit_log": {
+      "main": [[{ "node": "14. Evolution API — Enviar resposta", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["nestor", "neostore", "whatsapp"],
+  "meta": {
+    "instanceId": "nestor-main-v1"
+  }
+}

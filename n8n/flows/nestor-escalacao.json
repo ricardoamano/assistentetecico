@@ -1,0 +1,124 @@
+{
+  "name": "NESTOR — Sub-fluxo: Escalação",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node_trigger",
+      "name": "Trigger (chamado pelo fluxo principal)",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "timeMin",
+              "value": "={{ new Date().toISOString() }}",
+              "type": "string"
+            },
+            {
+              "name": "timeMax",
+              "value": "={{ (() => { const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString(); })() }}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_calc_dates",
+      "name": "1. Calcular período (próximos 30 dias)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://www.googleapis.com/calendar/v3/calendars/{{ $env.GCAL_ESCALACAO_ID }}/events",
+        "authentication": "oAuth2",
+        "oAuth2": { "id": "google_calendar_oauth", "name": "Google Calendar OAuth" },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "timeMin", "value": "={{ $json.timeMin }}" },
+            { "name": "timeMax", "value": "={{ $json.timeMax }}" },
+            { "name": "singleEvents", "value": "true" },
+            { "name": "orderBy", "value": "startTime" },
+            { "name": "maxResults", "value": "10" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_gcal_escalacao",
+      "name": "2. Google Calendar — Calendário de escalação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 512,\n  \"system\": \"Você é o Nestor. Formate a escala de técnicos de forma clara e direta.\\n\\nFormato para cada evento:\\n📅 [data por extenso] às [hora]\\n🎪 [nome do evento]\\n👷 [técnico(s) escalado(s) — extraia do título ou descrição do evento]\\n📍 [local, se houver]\\n\\nSe não houver escala: 'Nenhuma escalação encontrada.'\\nImportante: mostre apenas informações do evento, sem dados pessoais desnecessários.\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Dados da escala: {{ JSON.stringify($json.items ?? []) }}\\n\\nPergunta do usuário: {{ $('Trigger (chamado pelo fluxo principal)').item.json.userMessage }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node_claude_escalacao",
+      "name": "3. Claude — Formatar escalação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "finalResponse",
+              "value": "={{ $json.content[0].text }}",
+              "type": "string"
+            },
+            {
+              "name": "intent",
+              "value": "ESCALACAO",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_set_response",
+      "name": "4. Formatar resposta final",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Trigger (chamado pelo fluxo principal)": {
+      "main": [[{ "node": "1. Calcular período (próximos 30 dias)", "type": "main", "index": 0 }]]
+    },
+    "1. Calcular período (próximos 30 dias)": {
+      "main": [[{ "node": "2. Google Calendar — Calendário de escalação", "type": "main", "index": 0 }]]
+    },
+    "2. Google Calendar — Calendário de escalação": {
+      "main": [[{ "node": "3. Claude — Formatar escalação", "type": "main", "index": 0 }]]
+    },
+    "3. Claude — Formatar escalação": {
+      "main": [[{ "node": "4. Formatar resposta final", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": ["nestor", "escalacao"]
+}

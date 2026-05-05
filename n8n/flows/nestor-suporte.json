@@ -1,0 +1,255 @@
+{
+  "name": "NESTOR — Sub-fluxo: Suporte Técnico",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "node_trigger",
+      "name": "Trigger (chamado pelo fluxo principal)",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/match_knowledge_base",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Authorization", "value": "Bearer {{ $env.SUPABASE_SERVICE_KEY }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query_embedding\": {{ $json.queryEmbedding }},\n  \"match_threshold\": 0.7,\n  \"match_count\": 5\n}",
+        "options": {}
+      },
+      "id": "node_vector_search",
+      "name": "1. Supabase — Busca semântica (pgvector)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300],
+      "notes": "Recebe query_embedding gerado antes de chamar este sub-fluxo"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        }
+      },
+      "id": "node_if_found_kb",
+      "name": "2. IF — Encontrou na knowledge_base?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "kbContext",
+              "value": "={{ $json.map(doc => `[${doc.source.toUpperCase()}] ${doc.title}\\n${doc.content}`).join('\\n\\n---\\n\\n') }}",
+              "type": "string"
+            },
+            {
+              "name": "contextSource",
+              "value": "knowledge_base",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_set_kb_context",
+      "name": "3a. Contexto da knowledge_base",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [900, 180]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.GITBOOK_API_URL }}/spaces/{{ $env.GITBOOK_SPACE_ID }}/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{ $env.GITBOOK_API_KEY }}" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "query", "value": "={{ $('Trigger (chamado pelo fluxo principal)').item.json.userMessage }}" },
+            { "name": "limit", "value": "3" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node_gitbook_search",
+      "name": "3b. Gitbook — Buscar documentação",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 420]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "leftValue": "={{ $json.items?.length ?? 0 }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ]
+        }
+      },
+      "id": "node_if_found_gitbook",
+      "name": "4b. IF — Encontrou no Gitbook?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1120, 420]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "kbContext",
+              "value": "={{ $json.items?.map(item => `[GITBOOK] ${item.title}\\n${item.description ?? ''}`).join('\\n\\n---\\n\\n') ?? '' }}",
+              "type": "string"
+            },
+            {
+              "name": "contextSource",
+              "value": "gitbook",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_set_gitbook_context",
+      "name": "4b-sim. Contexto do Gitbook",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "kbContext",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "name": "contextSource",
+              "value": "web_search",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_set_web_context",
+      "name": "4b-não. Sem contexto (web search)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1340, 540]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-6\",\n  \"max_tokens\": 1024,\n  \"system\": \"Você é o Nestor, assistente técnico interno da Neostore Soluções para Eventos. Responde como um colega experiente: direto, sem enrolação, linguagem informal mas profissional. Nunca se apresenta como IA.\\n\\nUsuário: {{ $('Trigger (chamado pelo fluxo principal)').item.json.userName }} ({{ $('Trigger (chamado pelo fluxo principal)').item.json.userRole }})\\n\\nContexto técnico disponível:\\n{{ $json.kbContext || 'Nenhum contexto interno encontrado. Use seu conhecimento geral sobre equipamentos de eventos.' }}\\n\\nRegras:\\n- Responda com base no contexto acima\\n- Use passo a passo numerado para procedimentos\\n- Se houver link de vídeo no contexto, inclua ao final\\n- Se não souber: 'Não encontrei isso aqui. Tenta falar com o Amano ou consultar o manual do fornecedor.'\\n- Mensagens curtas, sem enrolação\",\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('Trigger (chamado pelo fluxo principal)').item.json.userMessage }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "node_claude_suporte",
+      "name": "5. Claude — Gerar resposta de suporte",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 360]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "finalResponse",
+              "value": "={{ $json.content[0].text }}",
+              "type": "string"
+            },
+            {
+              "name": "intent",
+              "value": "SUPORTE_TECNICO",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "node_set_response",
+      "name": "6. Formatar resposta final",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1780, 360]
+    }
+  ],
+  "connections": {
+    "Trigger (chamado pelo fluxo principal)": {
+      "main": [[{ "node": "1. Supabase — Busca semântica (pgvector)", "type": "main", "index": 0 }]]
+    },
+    "1. Supabase — Busca semântica (pgvector)": {
+      "main": [[{ "node": "2. IF — Encontrou na knowledge_base?", "type": "main", "index": 0 }]]
+    },
+    "2. IF — Encontrou na knowledge_base?": {
+      "main": [
+        [{ "node": "3a. Contexto da knowledge_base", "type": "main", "index": 0 }],
+        [{ "node": "3b. Gitbook — Buscar documentação", "type": "main", "index": 0 }]
+      ]
+    },
+    "3a. Contexto da knowledge_base": {
+      "main": [[{ "node": "5. Claude — Gerar resposta de suporte", "type": "main", "index": 0 }]]
+    },
+    "3b. Gitbook — Buscar documentação": {
+      "main": [[{ "node": "4b. IF — Encontrou no Gitbook?", "type": "main", "index": 0 }]]
+    },
+    "4b. IF — Encontrou no Gitbook?": {
+      "main": [
+        [{ "node": "4b-sim. Contexto do Gitbook", "type": "main", "index": 0 }],
+        [{ "node": "4b-não. Sem contexto (web search)", "type": "main", "index": 0 }]
+      ]
+    },
+    "4b-sim. Contexto do Gitbook": {
+      "main": [[{ "node": "5. Claude — Gerar resposta de suporte", "type": "main", "index": 0 }]]
+    },
+    "4b-não. Sem contexto (web search)": {
+      "main": [[{ "node": "5. Claude — Gerar resposta de suporte", "type": "main", "index": 0 }]]
+    },
+    "5. Claude — Gerar resposta de suporte": {
+      "main": [[{ "node": "6. Formatar resposta final", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": ["nestor", "suporte"]
+}
