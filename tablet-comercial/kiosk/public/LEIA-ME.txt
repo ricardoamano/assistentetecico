@@ -1,0 +1,9 @@
+Coloque aqui os arquivos de arte da campanha antes da Fase 2:
+
+  fundo-menu-alelo-1200.png   -> fundo oficial da home (sem os cards), usado pelo app
+  arte-menu-referencia.png    -> arte original com os cards, SO para conferir proporcoes
+                                 (nao entra no bundle do app)
+
+Esses arquivos foram enviados como imagem na conversa, mas o binario original
+precisa ser adicionado ao repositorio manualmente (git add + commit) ou enviado
+de novo quando a Fase 2 comecar.

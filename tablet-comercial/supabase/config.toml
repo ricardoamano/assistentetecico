@@ -1,0 +1,4 @@
+# Configuração do Supabase CLI para este projeto.
+# O importante aqui: /manifest é pública (os tablets chamam sem chave).
+[functions.manifest]
+verify_jwt = false
