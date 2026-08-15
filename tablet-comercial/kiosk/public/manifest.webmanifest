@@ -1,0 +1,10 @@
+{
+  "name": "Menu Comercial",
+  "short_name": "Menu",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#072525",
+  "theme_color": "#05342E",
+  "icons": []
+}

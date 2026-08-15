@@ -22,7 +22,11 @@ tablet-comercial/
 └── README.md           → este arquivo
 ```
 
-**Status:** ✅ Fase 1 (Supabase) pronta · ⬜ Fase 2 (kiosk) · ⬜ Fase 3 (admin) · ⬜ Fase 4 (docs de operação)
+**Status:** ✅ Fase 1 (Supabase, no ar) · ✅ Fase 2 (kiosk, build ok) · ✅ Fase 3 (admin, build ok) · ✅ Fase 4 (docs)
+
+**Falta (manual):** criar o usuário do gestor no Supabase Auth · subir
+`fundo-menu-alelo-1200.png` (bucket + `kiosk/public/`) · deployar `kiosk/` e
+`admin/` na Vercel (instruções nos READMEs de cada pasta).
 
 ---
 
@@ -147,9 +151,11 @@ Passou nos três? A Fase 1 está pronta. ✅
 
 ---
 
-## Fases seguintes
+## Fases 2, 3 e 4 — prontas
 
-- **Fase 2** — app `/kiosk` (a home precisa do arquivo `fundo-menu-alelo-1200.png`
-  em `kiosk/public/`).
-- **Fase 3** — admin com upload, validação de mídia e botão Publicar.
-- **Fase 4** — `OPERACAO.md` e checklist do app kiosk.
+- **kiosk/** — app dos tablets (Vite + React + SW com Range requests). Ver `kiosk/README.md`.
+  A home usa `fundo-menu-alelo-1200.png` de `kiosk/public/` quando presente; sem ele,
+  cai num gradiente com as cores da campanha (o app nunca quebra por falta da arte).
+- **admin/** — painel do gestor (Next.js 14). Ver `admin/README.md`, incluindo como
+  criar o usuário no Supabase Auth.
+- **OPERACAO.md** — checklist de campo dos tablets.

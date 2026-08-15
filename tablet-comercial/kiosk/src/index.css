@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Regras globais anti-travamento / kiosk */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+  background-color: #072525;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+/* O viewer de PDF precisa de pinça — exceção ao touch-action global */
+.viewer-pdf {
+  touch-action: none;
+}
+
+/* Transições permitidas: só transform/opacity, ≤200ms */
+.card-toque {
+  transition: transform 150ms ease, opacity 150ms ease;
+}
+.card-toque:active {
+  transform: scale(0.95);
+}
