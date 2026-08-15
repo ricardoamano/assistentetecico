@@ -121,6 +121,9 @@ create policy "admin remove devices"   on devices     for delete to authenticate
 -- ---- tablets (anon key): só heartbeat em devices ----
 create policy "tablet insere heartbeat"   on devices for insert to anon with check (true);
 create policy "tablet atualiza heartbeat" on devices for update to anon using (true) with check (true);
+-- o ON CONFLICT DO UPDATE do upsert precisa enxergar a linha existente;
+-- as colunas visíveis continuam restritas pelos grants de coluna abaixo
+create policy "tablet le heartbeat"       on devices for select to anon using (true);
 
 -- =============================================================
 -- Grants de coluna — a anon key não enxerga nada além do heartbeat
@@ -137,6 +140,8 @@ grant select (device_id, versao_ativa, versao_baixada, bytes_baixados,
 grant insert (device_id, versao_ativa, versao_baixada, bytes_baixados,
               online_em, bateria, memoria_mb, user_agent, ultimo_erro, erros_24h)
   on devices to anon;
-grant update (versao_ativa, versao_baixada, bytes_baixados,
+-- device_id entra no grant de update porque o upsert do PostgREST
+-- (resolution=merge-duplicates) o inclui no ON CONFLICT DO UPDATE.
+grant update (device_id, versao_ativa, versao_baixada, bytes_baixados,
               online_em, bateria, memoria_mb, user_agent, ultimo_erro, erros_24h)
   on devices to anon;

@@ -26,22 +26,38 @@ tablet-comercial/
 
 ---
 
-# Fase 1 — Configurar o Supabase (passo a passo)
+# Fase 1 — Supabase
 
-Você vai precisar de: uma conta no [supabase.com](https://supabase.com) e um computador
-com o navegador. Nenhuma instalação até o passo 4.
+## ✅ Já está no ar
 
-## 1. Criar o projeto
+O projeto **`tablet-comercial`** já foi criado, migrado e testado
+(organização Neostore, região São Paulo — custo: US$ 10/mês):
+
+| O quê | Valor |
+|---|---|
+| Project ref | `sbsjiiquxesyjtskjuyw` |
+| URL | `https://sbsjiiquxesyjtskjuyw.supabase.co` |
+| Manifest (público) | `https://sbsjiiquxesyjtskjuyw.supabase.co/functions/v1/manifest` |
+| anon key (pública por design) | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNic2ppaXF1eGVzeWp0c2tqdXl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3NjMxMDUsImV4cCI6MjEwMjMzOTEwNX0.n6cPyZBsuIh3vCWJTSbppFODJ8uXSBM-8XMklhgarA4` |
+
+Testes já executados e aprovados: manifest `200` com ETag, poll `304`,
+heartbeat de tablets gravando, anon key **sem** acesso às tabelas.
+
+**Faltam só 2 passos manuais:**
+
+1. **Usuário do gestor**: Dashboard → **Authentication → Users → Add user**
+   (e-mail + senha). É esse login que entra no admin.
+2. **Fundo da home**: ver "Fundo da home" abaixo.
+
+Os passos seguintes documentam como recriar tudo do zero, se um dia for preciso.
+
+## 1. Criar o projeto (só para recriar do zero)
 
 1. Entre em [supabase.com/dashboard](https://supabase.com/dashboard) e clique em **New project**.
 2. Nome: `tablet-comercial`. Região: **South America (São Paulo)**.
 3. Defina uma senha de banco forte e guarde-a (não será usada no dia a dia).
 4. Aguarde o projeto ficar verde ("Project is ready").
-5. Anote duas coisas em **Project Settings → API**:
-   - **Project URL** — algo como `https://abcdefgh.supabase.co`
-   - **anon public key** — uma chave longa começando com `eyJ…`
-
-O trecho `abcdefgh` da URL é o **project ref** — vamos usá-lo no passo 4.
+5. Anote em **Project Settings → API**: **Project URL** e **anon public key**.
 
 ## 2. Rodar as migrations
 
@@ -99,7 +115,7 @@ O manifest não expõe nada sensível — só o cardápio publicado.
 
 ## 5. Testar (o curl de aceite)
 
-Troque `SEU-PROJETO` pelo seu project ref e rode:
+Para o projeto já no ar, `SEU-PROJETO` = `sbsjiiquxesyjtskjuyw`:
 
 ```bash
 curl -i "https://SEU-PROJETO.supabase.co/functions/v1/manifest"

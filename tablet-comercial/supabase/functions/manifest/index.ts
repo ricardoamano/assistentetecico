@@ -57,8 +57,11 @@ Deno.serve(async (req) => {
 
   const etag = `"v${config.versao_publicada}"`;
 
-  // Poll barato: versão não mudou → 304 sem corpo
-  if (req.headers.get("if-none-match") === etag) {
+  // Poll barato: versão não mudou → 304 sem corpo.
+  // O CDN pode reescrever o ETag como fraco (W/"v1"), então a comparação
+  // ignora o prefixo W/ dos dois lados.
+  const recebido = (req.headers.get("if-none-match") ?? "").replace(/^W\//, "");
+  if (recebido === etag) {
     return new Response(null, {
       status: 304,
       headers: { ...CORS, ETag: etag, "Cache-Control": "no-store" },
