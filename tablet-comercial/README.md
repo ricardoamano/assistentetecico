@@ -22,11 +22,24 @@ tablet-comercial/
 └── README.md           → este arquivo
 ```
 
-**Status:** ✅ Fase 1 (Supabase, no ar) · ✅ Fase 2 (kiosk, build ok) · ✅ Fase 3 (admin, build ok) · ✅ Fase 4 (docs)
+**Status:** ✅ tudo no ar (Fases 1 a 4)
 
-**Falta (manual):** criar o usuário do gestor no Supabase Auth · subir
-`fundo-menu-alelo-1200.png` (bucket + `kiosk/public/`) · deployar `kiosk/` e
-`admin/` na Vercel (instruções nos READMEs de cada pasta).
+## 🔗 Links
+
+| O quê | URL |
+|---|---|
+| **Tablets (kiosk)** | https://tablet-comercial-kiosk.vercel.app |
+| **Admin (gestor)** | https://tablet-comercial-admin.vercel.app |
+| Manifest (API) | https://sbsjiiquxesyjtskjuyw.supabase.co/functions/v1/manifest |
+
+**Login do admin:** `ricardoamano@gmail.com` / `Neostore@2026`
+→ troque a senha em Supabase Dashboard → Authentication → Users.
+
+Não existe APK: é um app web. A URL do kiosk é o que entra como **URL inicial**
+do app kiosk Android já instalado nos tablets.
+
+**Falta (manual):** subir `fundo-menu-alelo-1200.png` (bucket + `kiosk/public/`) ·
+enviar os PDFs e o vídeo pelo admin e clicar em **Publicar**.
 
 ---
 
