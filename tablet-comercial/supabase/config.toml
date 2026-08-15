@@ -1,0 +1,8 @@
+# Configuração do Supabase CLI para este projeto.
+# O importante aqui: o /manifest é público (os tablets não têm login),
+# então o verify_jwt fica desligado para essa função.
+
+project_id = "tablet-comercial"
+
+[functions.manifest]
+verify_jwt = false
