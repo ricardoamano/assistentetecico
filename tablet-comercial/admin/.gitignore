@@ -1,0 +1,10 @@
+node_modules/
+.next/
+public/pdf-worker/
+out/
+.env
+.env.local
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
