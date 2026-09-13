@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Badges, tags & status pills" subtitle="Service tags, status pills, solid badges" viewport="700x280" --><html><head><meta charset="utf-8"><title>Badges & tags</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .stack { display: flex; flex-direction: column; gap: 14px; }
+  .grow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gtitle { font-family: var(--font-mono); font-size: 11px; color: var(--neo-fog); margin-bottom: 6px; }
+  .badge { display: inline-flex; padding: 4px 10px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; border-radius: 4px; }
+  .pill { display: inline-flex; gap: 6px; align-items: center; padding: 4px 10px; font-size: 12px; font-weight: 500; border-radius: 999px; background: #fff; border: 1px solid var(--neo-mist); }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .tag { display: inline-flex; padding: 4px 10px; font-size: 11px; font-weight: 600; border-radius: 4px; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Badges, tags & status pills</div>
+  <div class="stack">
+    <div>
+      <div class="gtitle">Service tags</div>
+      <div class="grow">
+        <span class="tag" style="background:#E6F0F2;color:#12454E">Áudio</span>
+        <span class="tag" style="background:#E6F0F2;color:#12454E">Vídeo</span>
+        <span class="tag" style="background:#E6F0F2;color:#12454E">Iluminação</span>
+        <span class="tag" style="background:#E6F0F2;color:#12454E">LED</span>
+        <span class="tag" style="background:#EFE6F0;color:#3A1840">Transmissão</span>
+        <span class="tag" style="background:#EFE6F0;color:#3A1840">Interatividade</span>
+        <span class="tag" style="background:#F4F5F6;color:#2A3033">Credenciamento</span>
+      </div>
+    </div>
+    <div>
+      <div class="gtitle">Status pills</div>
+      <div class="grow">
+        <span class="pill"><span class="dot" style="background:#2E8F5E"></span>Em operação</span>
+        <span class="pill"><span class="dot" style="background:#C28A1E"></span>Pré-produção</span>
+        <span class="pill"><span class="dot" style="background:#B83A3A"></span>Bloqueado</span>
+        <span class="pill"><span class="dot" style="background:#1F6E78"></span>Em rota</span>
+        <span class="pill"><span class="dot" style="background:#8C9498"></span>Encerrado</span>
+      </div>
+    </div>
+    <div>
+      <div class="gtitle">Solid badges</div>
+      <div class="grow">
+        <span class="badge" style="background:#1F6E78;color:#fff">Novo</span>
+        <span class="badge" style="background:#0E1112;color:#fff">Premium</span>
+        <span class="badge" style="background:#4A1F4F;color:#fff">Selecionado</span>
+        <span class="badge" style="background:#2E8F5E;color:#fff">Confirmado</span>
+        <span class="badge" style="background:#B83A3A;color:#fff">Falha</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

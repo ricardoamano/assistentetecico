@@ -1,0 +1,27 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Neutrals" subtitle="Ink, graphite, steel, fog, paper" viewport="700x220" --><html><head><meta charset="utf-8"><title>Neutral scale</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .ramp { display: grid; grid-template-columns: repeat(8, 1fr); border: 1px solid var(--neo-cloud); border-radius: 10px; overflow: hidden; }
+  .step { height: 88px; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 6px; }
+  .step .n { font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
+  .step .h { font-family: var(--font-mono); font-size: 9px; opacity: .8; }
+  .light { color: var(--neo-ink); }
+  .dark { color: var(--neo-white); }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Neutrals · graphite, steel, fog, paper</div>
+  <div class="ramp">
+    <div class="step dark" style="background:#0E1112"><div class="n">Ink</div><div class="h">#0E1112</div></div>
+    <div class="step dark" style="background:#1A1F22"><div class="n">Graphite</div><div class="h">#1A1F22</div></div>
+    <div class="step dark" style="background:#2A3033"><div class="n">Slate</div><div class="h">#2A3033</div></div>
+    <div class="step dark" style="background:#4A5256"><div class="n">Steel</div><div class="h">#4A5256</div></div>
+    <div class="step light" style="background:#8C9498"><div class="n">Fog</div><div class="h">#8C9498</div></div>
+    <div class="step light" style="background:#C3C9CC"><div class="n">Mist</div><div class="h">#C3C9CC</div></div>
+    <div class="step light" style="background:#E2E5E7"><div class="n">Cloud</div><div class="h">#E2E5E7</div></div>
+    <div class="step light" style="background:#F4F5F6;border-right:1px solid #E2E5E7"><div class="n">Paper</div><div class="h">#F4F5F6</div></div>
+  </div>
+  <div class="spec">— Ink para superfícies premium institucionais. Paper é o fundo padrão de trabalho. Nunca usar #000 puro.</div>
+</div>
+</body></html>

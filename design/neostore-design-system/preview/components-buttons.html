@@ -1,0 +1,81 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Buttons" subtitle="Primary, secondary, ghost, purple accent" viewport="700x320" --><html><head><meta charset="utf-8"><title>Buttons</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+  .group { display: flex; flex-direction: column; gap: 10px; }
+  .gtitle { font-family: var(--font-mono); font-size: 11px; color: var(--neo-fog); }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 18px;
+    font: 600 14px/1 var(--font-sans);
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: 180ms cubic-bezier(0.2,0,0,1);
+  }
+  .btn.primary { background: #1F6E78; color: #fff; }
+  .btn.primary:hover { background: #185863; }
+  .btn.secondary { background: transparent; color: #0E1112; border-color: #4A5256; }
+  .btn.secondary:hover { background: #F4F5F6; }
+  .btn.ghost { background: transparent; color: #1F6E78; }
+  .btn.ghost:hover { background: #E6F0F2; }
+  .btn.purple { background: #4A1F4F; color: #fff; }
+  .btn.sm { padding: 7px 12px; font-size: 13px; }
+  .btn.lg { padding: 14px 22px; font-size: 16px; }
+  .btn.disabled { opacity: 0.4; pointer-events: none; }
+  .pill {
+    display: inline-flex; padding: 7px 14px; font-size: 12px; font-weight: 600;
+    border-radius: 999px; background: #fff; border: 1px solid var(--neo-mist); color: var(--neo-ink);
+  }
+  .pill.active { background: #1F6E78; color: #fff; border-color: #1F6E78; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Buttons</div>
+  <div class="grid">
+    <div class="group">
+      <div class="gtitle">Primary · teal</div>
+      <div class="row">
+        <button class="btn primary">Solicitar orçamento</button>
+        <button class="btn primary sm">Detalhes</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="gtitle">Secondary · outline</div>
+      <div class="row">
+        <button class="btn secondary">Falar com equipe</button>
+        <button class="btn secondary sm">Ver mais</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="gtitle">Ghost · text</div>
+      <div class="row">
+        <button class="btn ghost">Baixar PDF →</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="gtitle">Purple · acento (raro)</div>
+      <div class="row">
+        <button class="btn purple">Casos selecionados</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="gtitle">Sizes</div>
+      <div class="row">
+        <button class="btn primary sm">Small</button>
+        <button class="btn primary">Default</button>
+        <button class="btn primary lg">Large</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="gtitle">Disabled</div>
+      <div class="row">
+        <button class="btn primary disabled">Confirmar</button>
+        <button class="btn secondary disabled">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

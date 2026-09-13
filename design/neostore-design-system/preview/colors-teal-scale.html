@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Teal scale" subtitle="Teal 50→900 institutional ramp" viewport="700x220" --><html><head><meta charset="utf-8"><title>Teal scale</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .ramp { display: grid; grid-template-columns: repeat(9, 1fr); border: 1px solid var(--neo-cloud); border-radius: 10px; overflow: hidden; }
+  .step { height: 88px; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 6px; }
+  .step .n { font-family: var(--font-mono); font-size: 10px; }
+  .step .h { font-family: var(--font-mono); font-size: 9px; opacity: .8; }
+  .light { color: var(--neo-ink); }
+  .dark { color: var(--neo-white); }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Teal scale · 50 → 900</div>
+  <div class="ramp">
+    <div class="step light" style="background:#E6F0F2"><div class="n">50</div><div class="h">#E6F0F2</div></div>
+    <div class="step light" style="background:#C2DBDF"><div class="n">100</div><div class="h">#C2DBDF</div></div>
+    <div class="step light" style="background:#8FB9C0"><div class="n">200</div><div class="h">#8FB9C0</div></div>
+    <div class="step light" style="background:#5A95A0"><div class="n">300</div><div class="h">#5A95A0</div></div>
+    <div class="step dark" style="background:#357683"><div class="n">400</div><div class="h">#357683</div></div>
+    <div class="step dark" style="background:#1F6E78;outline:2px solid #fff;outline-offset:-2px"><div class="n">500</div><div class="h">#1F6E78</div></div>
+    <div class="step dark" style="background:#185863"><div class="n">600</div><div class="h">#185863</div></div>
+    <div class="step dark" style="background:#12454E"><div class="n">700</div><div class="h">#12454E</div></div>
+    <div class="step dark" style="background:#0D343B"><div class="n">800</div><div class="h">#0D343B</div></div>
+  </div>
+  <div class="spec">— 500 é o token core. Use 600/700 para estados hover/press em superfícies escuras; 50/100 para fundos institucionais leves.</div>
+</div>
+</body></html>

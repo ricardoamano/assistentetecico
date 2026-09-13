@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Status colors" subtitle="Success / warning / error / info" viewport="700x200" --><html><head><meta charset="utf-8"><title>Status colors</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; }
+  .stat {
+    border: 1px solid var(--neo-cloud);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .stat .bar { height: 8px; }
+  .stat .body { padding: 12px 14px; background: var(--bg); }
+  .stat .name { font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .stat .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .stat .hex { font-family: var(--font-mono); font-size: 11px; color: var(--neo-steel); margin-top: 4px; }
+  .stat .role { font-size: 11px; color: var(--neo-fog); margin-top: 6px; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Status · semantic colors</div>
+  <div class="grid">
+    <div class="stat">
+      <div class="bar" style="background:#2E8F5E"></div>
+      <div class="body" style="background:#E6F2EC">
+        <div class="name"><span class="dot" style="background:#2E8F5E"></span>Success</div>
+        <div class="hex">#2E8F5E</div>
+        <div class="role">confirmação · OK</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="bar" style="background:#C28A1E"></div>
+      <div class="body" style="background:#FAF1DD">
+        <div class="name"><span class="dot" style="background:#C28A1E"></span>Warning</div>
+        <div class="hex">#C28A1E</div>
+        <div class="role">atenção · revisar</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="bar" style="background:#B83A3A"></div>
+      <div class="body" style="background:#F7E4E4">
+        <div class="name"><span class="dot" style="background:#B83A3A"></span>Error</div>
+        <div class="hex">#B83A3A</div>
+        <div class="role">falha · bloqueio</div>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="bar" style="background:#1F6E78"></div>
+      <div class="body" style="background:#E6F0F2">
+        <div class="name"><span class="dot" style="background:#1F6E78"></span>Info</div>
+        <div class="hex">#1F6E78</div>
+        <div class="role">teal-500</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

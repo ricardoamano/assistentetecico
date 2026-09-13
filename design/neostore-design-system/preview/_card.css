@@ -1,0 +1,38 @@
+/* card base — keep cards visually quiet, the asset name shows outside */
+@import url('../colors_and_type.css');
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--neo-paper);
+  color: var(--fg-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+.card {
+  width: 700px;
+  background: #fff;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.card.dark {
+  background: var(--neo-ink);
+  color: var(--neo-white);
+}
+.row { display: flex; gap: 12px; align-items: stretch; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--neo-fog);
+}
+.spec {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--neo-fog);
+}

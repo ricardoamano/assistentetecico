@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Logo lockups" subtitle="Horizontal + vertical · color + mono · light + dark" viewport="700x360" --><html><head><meta charset="utf-8"><title>Logo lockups</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .frame { border-radius: 8px; padding: 8px; display: flex; align-items: center; justify-content: center; min-height: 320px; }
+  .frame img { height: 280px; max-width: 95%; object-fit: contain; }
+  .frame .lab { position: absolute; top: 8px; left: 12px; font-family: var(--font-mono); font-size: 10px; color: var(--neo-fog); }
+  .wrap { position: relative; }
+  .light { background: #fff; border: 1px solid var(--neo-cloud); }
+  .paper { background: var(--neo-paper); border: 1px solid var(--neo-cloud); }
+  .ink { background: #000; }
+  .graphite { background: #1A1F22; }
+  .lab.on-dark { color: rgba(255,255,255,0.6); }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Logo · principais lockups</div>
+  <div class="grid">
+    <div class="wrap"><div class="lab">Horizontal · color · light</div><div class="frame light"><img src="../assets/logo-horizontal-color-light.png?v=5"/></div></div>
+    <div class="wrap"><div class="lab on-dark">Horizontal · sobre preto</div><div class="frame ink"><img src="../assets/logo-horizontal-color-dark.png?v=5"/></div></div>
+    <div class="wrap"><div class="lab">Vertical · color · light</div><div class="frame paper"><img src="../assets/logo-vertical-color-transparent.png?v=5"/></div></div>
+    <div class="wrap"><div class="lab on-dark">Vertical · sobre grafite</div><div class="frame graphite"><img src="../assets/logo-vertical-color-dark.png?v=5"/></div></div>
+  </div>
+</div>
+</body></html>

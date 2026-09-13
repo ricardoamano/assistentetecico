@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Tables" subtitle="Technical data table with mono numerals" viewport="700x260" --><html><head><meta charset="utf-8"><title>Tables & lists</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--neo-fog); border-bottom: 1px solid var(--neo-cloud); }
+  td { padding: 12px; border-bottom: 1px solid var(--neo-cloud); color: var(--neo-ink); }
+  tr:last-child td { border-bottom: 0; }
+  tr:nth-child(even) td { background: #FAFAFB; }
+  td.num { font-family: var(--font-mono); text-align: right; }
+  .pill { display: inline-flex; gap: 6px; align-items: center; padding: 2px 8px; font-size: 11px; font-weight: 500; border-radius: 999px; background: #E6F0F2; color: #12454E; }
+  .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: #1F6E78; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Tabelas técnicas · linha de equipamentos</div>
+  <div style="border:1px solid var(--neo-cloud);border-radius:8px;overflow:hidden">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Equipamento</th><th>Especificação</th><th>Status</th><th style="text-align:right">Qtd</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="num">LED-014</td><td>Painel LED P2.6</td><td>4K @ 60fps · 3500nits</td><td><span class="pill"><span class="dot"></span>Em operação</span></td><td class="num">12</td></tr>
+        <tr><td class="num">SND-022</td><td>Console digital</td><td>32ch · 96kHz · 48V</td><td><span class="pill"><span class="dot"></span>Em operação</span></td><td class="num">2</td></tr>
+        <tr><td class="num">LIT-007</td><td>Moving head 380W</td><td>DMX · 16ch · zoom</td><td><span class="pill" style="background:#FAF1DD;color:#7A5612"><span class="dot" style="background:#C28A1E"></span>Pré-produção</span></td><td class="num">24</td></tr>
+        <tr><td class="num">CAM-003</td><td>Câmera 4K</td><td>SDI · zoom 30x</td><td><span class="pill"><span class="dot"></span>Em rota</span></td><td class="num">4</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body></html>

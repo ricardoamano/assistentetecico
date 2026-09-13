@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Cards" subtitle="Service / equipment cards · light + dark" viewport="700x280" --><html><head><meta charset="utf-8"><title>Cards</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .ncard {
+    border: 1px solid var(--neo-cloud);
+    border-radius: 10px;
+    padding: 18px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .ncard.dark { background: #0E1112; border-color: rgba(255,255,255,0.08); color: #fff; }
+  .ncard .icon { width: 28px; height: 28px; border-radius: 6px; background: #E6F0F2; display:flex;align-items:center;justify-content:center; }
+  .ncard .icon svg { width: 16px; height: 16px; stroke: #1F6E78; }
+  .ncard .h { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .ncard.dark .h { color: #fff; }
+  .ncard .d { font-size: 13px; color: var(--neo-steel); line-height: 1.5; }
+  .ncard.dark .d { color: var(--neo-mist); }
+  .specs { display: flex; gap: 12px; padding-top: 8px; border-top: 1px solid var(--neo-cloud); }
+  .ncard.dark .specs { border-color: rgba(255,255,255,0.1); }
+  .specs .s { font-family: var(--font-mono); font-size: 11px; color: var(--neo-fog); }
+  .specs .s b { color: var(--neo-ink); font-weight: 500; }
+  .ncard.dark .specs .s b { color: #fff; }
+  .tag { display:inline-block; padding: 3px 8px; border-radius: 999px; background: #E6F0F2; color: #12454E; font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Cards · serviço & equipamento</div>
+  <div class="grid">
+    <div class="ncard">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15 9a3 3 0 0 1 0 6"/><path d="M19 5a7 7 0 0 1 0 14"/></svg>
+      </div>
+      <span class="tag">Áudio</span>
+      <div class="h">Linha balanceada XLR</div>
+      <div class="d">Roteamento redundante, console digital, monitoração FOH e palco com retorno IEM.</div>
+      <div class="specs">
+        <div class="s"><b>32</b> canais</div>
+        <div class="s"><b>48V</b> phantom</div>
+        <div class="s"><b>96k</b> sample</div>
+      </div>
+    </div>
+    <div class="ncard dark">
+      <div class="icon" style="background:rgba(31,110,120,0.2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#5A95A0" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="m17 9 4-2v10l-4-2"/></svg>
+      </div>
+      <span class="tag" style="background:rgba(255,255,255,0.08);color:#8FB9C0">Vídeo</span>
+      <div class="h">Painel LED P2.6</div>
+      <div class="d">4K @ 60fps, switcher redundante e operação dedicada em FOH.</div>
+      <div class="specs">
+        <div class="s"><b>2.6</b> mm pitch</div>
+        <div class="s"><b>4K</b> @ 60fps</div>
+        <div class="s"><b>3500</b> nits</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

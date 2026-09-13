@@ -1,0 +1,69 @@
+<!doctype html>
+<!-- @dsCard group="Components" name="Form inputs" subtitle="Inputs, select, textarea, checkbox, toggle" viewport="700x360" --><html><head><meta charset="utf-8"><title>Form inputs</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--neo-steel); }
+  .input, .select, .textarea {
+    font: 400 14px var(--font-sans);
+    padding: 10px 12px;
+    border: 1px solid var(--neo-mist);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--neo-ink);
+  }
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: #1F6E78;
+    box-shadow: 0 0 0 3px rgba(31,110,120,0.28);
+  }
+  .input.err { border-color: #B83A3A; }
+  .err-msg { font-size: 11px; color: #B83A3A; }
+  .help { font-size: 11px; color: var(--neo-fog); }
+  .check { display: flex; gap: 8px; align-items: center; font-size: 13px; }
+  .check input { accent-color: #1F6E78; width: 16px; height: 16px; }
+  .toggle { width: 36px; height: 20px; background: var(--neo-mist); border-radius: 999px; position: relative; cursor: pointer; }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: 180ms; }
+  .toggle.on { background: #1F6E78; }
+  .toggle.on::after { left: 18px; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Forms</div>
+  <div class="grid">
+    <div class="field">
+      <label>Nome do contato</label>
+      <input class="input" placeholder="Como podemos chamar você" />
+    </div>
+    <div class="field">
+      <label>E-mail corporativo</label>
+      <input class="input" value="contato@empresa.com.br" style="border-color:#1F6E78;box-shadow:0 0 0 3px rgba(31,110,120,0.28)" />
+    </div>
+    <div class="field">
+      <label>Tipo de evento</label>
+      <select class="select">
+        <option>Convenção corporativa</option>
+        <option>Congresso</option>
+        <option>Lançamento de produto</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Data prevista</label>
+      <input class="input err" value="2025-13-99" />
+      <div class="err-msg">Data inválida. Use o formato AAAA-MM-DD.</div>
+    </div>
+    <div class="field" style="grid-column:1/-1">
+      <label>Briefing técnico</label>
+      <textarea class="textarea" rows="2" placeholder="Conte para a equipe: público estimado, formato, equipamentos previstos."></textarea>
+      <div class="help">Quanto mais técnico o briefing, mais preciso o orçamento.</div>
+    </div>
+    <div class="check">
+      <input type="checkbox" checked /> Aceito receber retorno por e-mail
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;font-size:13px">
+      <div class="toggle on"></div> Notificações de operação
+    </div>
+  </div>
+</div>
+</body></html>

@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Logo clear space" subtitle="Protection area + minimum sizes" viewport="700x320" --><html><head><meta charset="utf-8"><title>Logo clear space</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .frame { background: var(--neo-paper); border: 1px solid var(--neo-cloud); border-radius: 8px; padding: 6px; position: relative; }
+  .protected { display: inline-block; padding: 4px; outline: 1px dashed #1F6E78; outline-offset: -1px; position: relative; }
+  .protected::before, .protected::after {
+    content: 'x'; position: absolute; font-family: var(--font-mono); font-size: 9px; color: #1F6E78;
+  }
+  .protected::before { top: 0; left: 50%; transform: translateX(-50%); }
+  .protected::after { bottom: 0; right: 1px; }
+  .protected img { display: block; height: 44px; }
+  .rules { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--neo-steel); }
+  .rule { display: flex; gap: 10px; align-items: baseline; }
+  .rule b { font-family: var(--font-mono); color: var(--neo-ink); width: 64px; flex-shrink: 0; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Clear space · tamanho mínimo</div>
+  <div class="frame">
+    <div class="protected">
+      <img src="../assets/logo-horizontal-color-transparent.png?v=5"/>
+    </div>
+  </div>
+  <div class="rules">
+    <div class="rule"><b>x</b> = altura do "o" minúsculo do wordmark · proteção em todos os lados</div>
+    <div class="rule"><b>2x</b> em capas executivas e propostas premium</div>
+    <div class="rule"><b>≥ 24px</b> mínimo digital com tagline · 16px wordmark only · 12px símbolo</div>
+    <div class="rule"><b>≥ 12mm</b> mínimo impresso com tagline · 8mm wordmark · 6mm símbolo</div>
+  </div>
+</div>
+</body></html>

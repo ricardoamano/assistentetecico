@@ -1,0 +1,57 @@
+<!doctype html>
+<!-- @dsCard group="Slides" name="Slide · content cards" subtitle="3 cards com tag + spec" viewport="1280x720" -->
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8"/>
+  <title>Content slide — NEOSTORE</title>
+  <link rel="stylesheet" href="../colors_and_type.css"/>
+  <style>
+    html, body { margin: 0; background: #000; }
+    .slide { width: 1280px; height: 720px; background: var(--neo-paper); color: var(--neo-ink); position: relative; padding: 56px 64px; box-sizing: border-box; }
+    .top { display: flex; justify-content: space-between; align-items: center; }
+    .top img { height: 60px; }
+    .top .meta { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--neo-fog); }
+    .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--neo-teal-500); margin-top: 36px; }
+    h2 { font-size: 52px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; margin: 12px 0 36px; max-width: 900px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { background: #fff; border: 1px solid var(--neo-cloud); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .tag { align-self: flex-start; background: var(--neo-teal-50); color: var(--neo-teal-700); padding: 4px 10px 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 6px; }
+    .tag svg { width: 14px; height: 14px; stroke-width: 2; }
+    .card h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; margin: 4px 0 0; }
+    .card p { font-size: 14px; line-height: 1.5; color: var(--neo-steel); margin: 0; }
+    .spec { margin-top: auto; padding-top: 12px; border-top: 1px solid var(--neo-cloud); font-family: var(--font-mono); font-size: 11px; color: var(--neo-fog); }
+    .footer { position: absolute; bottom: 28px; left: 64px; right: 64px; display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--neo-cloud); font-family: var(--font-mono); font-size: 11px; color: var(--neo-fog); }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="top">
+      <img src="../assets/logo-horizontal-color-transparent.png?v=5"/>
+      <div class="meta">02 · Operação</div>
+    </div>
+    <div class="eyebrow">Soluções técnicas</div>
+    <h2>Áudio, vídeo, iluminação. Em um ritmo só.</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12v3a9 9 0 0 0 18 0v-3"/><path d="M3 12a9 9 0 0 1 18 0"/><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="17" y="12" width="4" height="8" rx="1"/></svg>Áudio</span>
+        <h3>Console digital</h3>
+        <p>Linha balanceada, monitoração FOH e palco com retorno IEM. Redundância em pontos críticos.</p>
+        <div class="spec">32 ch · 96kHz · 48V phantom</div>
+      </div>
+      <div class="card">
+        <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>Vídeo</span>
+        <h3>Painel LED P2.6</h3>
+        <p>4K @ 60fps com switcher redundante e operação dedicada em FOH durante o evento.</p>
+        <div class="spec">2.6mm pitch · 3500 nits</div>
+      </div>
+      <div class="card">
+        <span class="tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>Iluminação</span>
+        <h3>Cena DMX programada</h3>
+        <p>Moving heads, par LED e mesa DMX com mapeamento alinhado ao run-of-show.</p>
+        <div class="spec">DMX · 16ch · zoom</div>
+      </div>
+    </div>
+    <div class="footer"><span>NEOSTORE · operação 2026</span><span>03 / 05</span></div>
+  </div>
+</body>
+</html>

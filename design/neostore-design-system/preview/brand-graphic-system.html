@@ -1,0 +1,64 @@
+<!doctype html>
+<!-- @dsCard group="Brand" name="Graphic system" subtitle="Module bullets, watermarks, dividers, patterns" viewport="700x360" --><html><head><meta charset="utf-8"><title>Graphic system</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .demo { border-radius: 10px; padding: 18px; min-height: 140px; position: relative; overflow: hidden; }
+  .demo .l { font-family: var(--font-mono); font-size: 10px; color: var(--neo-fog); position: absolute; top: 10px; left: 12px; }
+  .demo.dark { background: #0E1112; color: #fff; }
+  .demo.dark .l { color: rgba(255,255,255,0.4); }
+  .demo .body { padding-top: 24px; }
+  .bullet { width: 22px; height: 22px; vertical-align: middle; margin-right: 12px; object-fit: contain; }
+  /* tile pattern */
+  .pattern {
+    background-image:
+      linear-gradient(135deg, transparent 49%, rgba(31,110,120,0.08) 49% 51%, transparent 51%),
+      linear-gradient(45deg, transparent 49%, rgba(74,31,79,0.06) 49% 51%, transparent 51%);
+    background-size: 32px 32px;
+  }
+  /* divider */
+  .div-line { height: 2px; background: linear-gradient(to right, #1F6E78 0 60%, #4A1F4F 60% 100%); border-radius: 2px; margin-top: 32px; }
+  /* corner mark */
+  .corner { position: absolute; bottom: 14px; right: 14px; }
+  .corner svg { width: 56px; height: 56px; opacity: 0.16; }
+  .stat { font-size: 36px; font-weight: 800; letter-spacing: -0.025em; line-height: 1; }
+  .stat .u { font-size: 16px; font-weight: 600; color: var(--neo-fog); margin-left: 4px; }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Sistema gráfico · derivado dos dois módulos</div>
+  <div class="row">
+    <div class="demo" style="background:var(--neo-paper);border:1px solid var(--neo-cloud)">
+      <div class="l">Bullet · módulos conectados</div>
+      <div class="body" style="padding-top:32px">
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+          <div style="display:flex;align-items:center"><img class="bullet" src="../assets/symbol-only.png"/> Áudio profissional balanceado</div>
+          <div style="display:flex;align-items:center"><img class="bullet" src="../assets/symbol-only.png"/> Operação em tempo real</div>
+          <div style="display:flex;align-items:center"><img class="bullet" src="../assets/symbol-only.png"/> Equipe técnica em campo</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo dark">
+      <div class="l">Watermark · símbolo grande</div>
+      <div class="corner">
+        <img src="../assets/logo-vertical-color-transparent.png" style="width:80px;opacity:0.3"/>
+      </div>
+      <div class="body">
+        <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#5A95A0">Operação 2026</div>
+        <div class="stat" style="margin-top:8px;color:#fff">142<span class="u">eventos</span></div>
+      </div>
+    </div>
+    <div class="demo pattern" style="background-color:var(--neo-paper);border:1px solid var(--neo-cloud)">
+      <div class="l">Pattern · institucional · 6% opacity</div>
+    </div>
+    <div class="demo" style="background:#fff;border:1px solid var(--neo-cloud)">
+      <div class="l">Section divider</div>
+      <div style="padding-top:30px">
+        <div style="font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:#1F6E78;font-weight:600">Próximo bloco</div>
+        <div style="font-size:18px;font-weight:700;margin-top:6px">Escopo técnico</div>
+        <div class="div-line"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

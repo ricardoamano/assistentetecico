@@ -30,10 +30,9 @@ assistentetecico/
 │       └── nestor-escalacao.json    # Sub-fluxo: escalação
 ├── agent/
 │   └── nestor_system_prompt.txt     # System prompt do NESTOR
-├── design/                          # Design System Neostore (OBRIGATÓRIO em todo app)
-│   ├── neostore-design-system.md    # Tokens, tipografia, componentes, regras de logo
-│   ├── neostore.css                 # Variáveis CSS + componentes base para colar em HTML
-│   └── assets/                      # symbol.png, logo-dark.png, logo-light.png
+├── design/                          # Design System NEOSTORE oficial (OBRIGATÓRIO em todo app)
+│   └── neostore-design-system/      # README (regras), colors_and_type.css (tokens), assets/, ui_kits/, preview/
+├── .claude/skills/neostore-design/  # Skill de projeto que carrega o design system em toda sessão
 ├── link/                            # Neostore Link (link.neostore.app) — deploy na Vercel
 │   ├── app.js                       # App inteiro: pad com PIN + tempo + painel admin
 │   ├── api/index.js                 # Adaptador Vercel (todas as rotas → app.js)
@@ -125,13 +124,14 @@ POST https://seu-n8n.com/webhook/nestor-webhook
 
 Eventos necessários: `MESSAGES_UPSERT`
 
-## Design System Neostore (regra para todo app deste repositório)
+## Design System NEOSTORE (regra para todo app deste repositório)
 
-Todo app, painel ou página criada aqui usa o Design System Neostore: `design/neostore-design-system.md`
-(tokens) e `design/neostore.css` (base pronta). Resumo: fonte Manrope (mono JetBrains Mono), primária teal
-`#1F6E78`, secundária roxo `#4A1F4F`, texto ink `#0E1112`, fundo paper `#F4F5F6`, cartões brancos com raio 14px,
-botões teal com raio 10px. Tema claro por padrão. Logo em `design/assets/`. Não usar laranja/amarelo/azul
-como destaque. Origem dos tokens: repositório `neostore-website` (tailwind.config.ts / globals.css).
+Todo app, painel, página ou peça visual criada aqui segue `design/neostore-design-system/README.md`
+e usa os tokens de `design/neostore-design-system/colors_and_type.css`. Skill: `.claude/skills/neostore-design/`.
+Resumo: Manrope (mono JetBrains Mono); teal `#1F6E78` é a cor de trabalho; roxo `#4A1F4F` é acento
+(um elemento por tela, no máximo); texto ink `#0E1112`; fundo paper `#F4F5F6`; cartões brancos com borda
+cloud e raio 10px, sem sombra; botões e inputs com raio 6px; status sucesso `#2E8F5E`, aviso `#C28A1E`,
+erro `#B83A3A`. Sem emoji, sem ponto de exclamação, sem gradiente, sem bounce. Logos em `assets/`.
 
 ## Neostore Link (`link/`)
 

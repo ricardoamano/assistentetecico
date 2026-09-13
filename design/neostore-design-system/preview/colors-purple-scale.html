@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- @dsCard group="Colors" name="Purple scale" subtitle="Purple 50→900 — accent only" viewport="700x220" --><html><head><meta charset="utf-8"><title>Purple scale</title>
+<link rel="stylesheet" href="_card.css">
+<style>
+  .ramp { display: grid; grid-template-columns: repeat(9, 1fr); border: 1px solid var(--neo-cloud); border-radius: 10px; overflow: hidden; }
+  .step { height: 88px; display: flex; flex-direction: column; justify-content: flex-end; padding: 8px 6px; }
+  .step .n { font-family: var(--font-mono); font-size: 10px; }
+  .step .h { font-family: var(--font-mono); font-size: 9px; opacity: .8; }
+  .light { color: var(--neo-ink); }
+  .dark { color: var(--neo-white); }
+</style>
+</head><body>
+<div class="card">
+  <div class="eyebrow">Purple scale · 50 → 900 · uso parcimonioso</div>
+  <div class="ramp">
+    <div class="step light" style="background:#EFE6F0"><div class="n">50</div><div class="h">#EFE6F0</div></div>
+    <div class="step light" style="background:#D6BFD9"><div class="n">100</div><div class="h">#D6BFD9</div></div>
+    <div class="step light" style="background:#AC85B1"><div class="n">200</div><div class="h">#AC85B1</div></div>
+    <div class="step dark" style="background:#82518A"><div class="n">300</div><div class="h">#82518A</div></div>
+    <div class="step dark" style="background:#5C2F65"><div class="n">400</div><div class="h">#5C2F65</div></div>
+    <div class="step dark" style="background:#4A1F4F;outline:2px solid #fff;outline-offset:-2px"><div class="n">500</div><div class="h">#4A1F4F</div></div>
+    <div class="step dark" style="background:#3A1840"><div class="n">600</div><div class="h">#3A1840</div></div>
+    <div class="step dark" style="background:#2C1230"><div class="n">700</div><div class="h">#2C1230</div></div>
+    <div class="step dark" style="background:#1F0C22"><div class="n">800</div><div class="h">#1F0C22</div></div>
+  </div>
+  <div class="spec">— Purple é acento. Nunca como fundo maior que um card. Nunca em texto corrido.</div>
+</div>
+</body></html>
