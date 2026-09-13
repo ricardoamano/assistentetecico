@@ -29,6 +29,10 @@ assistentetecico/
 │       └── nestor-escalacao.json    # Sub-fluxo: escalação
 ├── agent/
 │   └── nestor_system_prompt.txt     # System prompt do NESTOR
+├── link/                            # Neostore Link (link.neostore.app)
+│   ├── worker.js                    # Cloudflare Worker: pad com PIN + tempo + painel admin
+│   ├── wrangler.toml                # Deploy via CLI (opcional)
+│   └── README.md                    # Instalação passo a passo pelo painel Cloudflare
 ├── .env.example                     # Template de variáveis de ambiente
 └── CLAUDE.md                        # Este arquivo
 ```
@@ -110,3 +114,9 @@ POST https://seu-n8n.com/webhook/nestor-webhook
 ```
 
 Eventos necessários: `MESSAGES_UPSERT`
+
+## Neostore Link (`link/`)
+
+Ferramenta separada do NESTOR: pad de texto estilo dontpad em `link.neostore.app/<nome>`,
+com PIN numérico, exposição por tempo limitado e painel de superadmin em endereço próprio.
+Roda em Cloudflare Workers + KV, arquivo único, sem build. Instruções em `link/README.md`.

@@ -1,0 +1,23 @@
+# Configuração para deploy via linha de comando (opcional — o README explica
+# também o caminho 100% pelo painel da Cloudflare, sem instalar nada).
+#
+#   npx wrangler kv namespace create PADS      # copie o id gerado abaixo
+#   npx wrangler secret put ADMIN_PASSWORD     # senha do superadmin
+#   npx wrangler deploy
+
+name = "neostore-link"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[[kv_namespaces]]
+binding = "PADS"
+id = "COLE_AQUI_O_ID_DO_KV"
+
+[vars]
+ADMIN_PATH = "admin"          # troque por algo difícil de adivinhar, ex.: "painel-ns-2026"
+BRAND_NAME = "Neostore Link"
+
+# Domínio próprio (a zona neostore.app precisa estar na sua conta Cloudflare)
+[[routes]]
+pattern = "link.neostore.app"
+custom_domain = true
