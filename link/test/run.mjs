@@ -49,6 +49,26 @@ function mockUpstash() {
   return new Promise((r) => server.listen(0, () => r({ server, url: `http://127.0.0.1:${server.address().port}` })));
 }
 
+/* ---------- Supabase RPC simulado (neostore_link_kv_op) ---------- */
+function mockSupabase() {
+  const store = new Map();
+  const server = http.createServer(async (req, res) => {
+    const chunks = []; for await (const c of req) chunks.push(c);
+    const b = JSON.parse(Buffer.concat(chunks).toString());
+    if (req.url !== '/rest/v1/rpc/neostore_link_kv_op' || req.headers.apikey !== 'anon' || b.p_secret !== 'segredo') {
+      res.writeHead(401, { 'content-type': 'application/json' }); return res.end('{"message":"unauthorized"}');
+    }
+    for (const [k, v] of store) if (v.exp && v.exp < Date.now()) store.delete(k);
+    let out;
+    if (b.p_op === 'get') out = { value: store.get(b.p_key)?.value ?? null };
+    else if (b.p_op === 'put') { store.set(b.p_key, { value: b.p_value, exp: b.p_ttl ? Date.now() + b.p_ttl * 1000 : 0 }); out = { ok: true }; }
+    else if (b.p_op === 'delete') { store.delete(b.p_key); out = { ok: true }; }
+    else if (b.p_op === 'list') out = { keys: [...store.keys()].filter((k) => k.startsWith(b.p_prefix)).sort() };
+    res.writeHead(200, { 'content-type': 'application/json' }); res.end(JSON.stringify(out));
+  });
+  return new Promise((r) => server.listen(0, () => r({ server, url: `http://127.0.0.1:${server.address().port}` })));
+}
+
 /* ---------- Servidor que imita a Vercel (rewrite + handler) ---------- */
 function vercelLike() {
   const server = http.createServer((req, res) => {
@@ -154,6 +174,16 @@ async function scenario(name, send) {
   const v = await vercelLike();
   await scenario('api/index.js + Upstash REST simulado (Vercel)', (path, init) => fetch(v.url + path, init));
   up.server.close(); v.server.close();
+}
+
+/* ---------- 3. Vercel: api/index.js + Supabase RPC simulado ---------- */
+{
+  delete process.env.KV_REST_API_URL; delete process.env.KV_REST_API_TOKEN;
+  const sb = await mockSupabase();
+  process.env.SUPABASE_URL = sb.url; process.env.SUPABASE_ANON_KEY = 'anon'; process.env.LINK_DB_SECRET = 'segredo';
+  const v = await vercelLike();
+  await scenario('api/index.js + Supabase RPC simulado (Vercel)', (path, init) => fetch(v.url + path, init));
+  sb.server.close(); v.server.close();
 }
 
 console.log('\nTODOS OS TESTES PASSARAM');

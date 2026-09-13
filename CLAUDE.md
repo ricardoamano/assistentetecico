@@ -20,7 +20,8 @@ assistentetecico/
 ├── supabase/
 │   └── migrations/
 │       ├── 001_initial_schema.sql   # Tabelas + pgvector + RLS
-│       └── 002_seed_data.sql        # Usuário admin inicial
+│       ├── 002_seed_data.sql        # Usuário admin inicial
+│       └── 003_neostore_link.sql    # Storage do Neostore Link (aplicada em neostore-site)
 ├── n8n/
 │   └── flows/
 │       ├── nestor-main.json         # Fluxo principal
@@ -32,7 +33,8 @@ assistentetecico/
 ├── link/                            # Neostore Link (link.neostore.app) — deploy na Vercel
 │   ├── app.js                       # App inteiro: pad com PIN + tempo + painel admin
 │   ├── api/index.js                 # Adaptador Vercel (todas as rotas → app.js)
-│   ├── lib/upstash.js               # Storage Upstash Redis (marketplace Vercel)
+│   ├── lib/supabase.js              # Storage padrão: Supabase via função com segredo
+│   ├── lib/upstash.js               # Storage alternativo: Upstash Redis
 │   ├── vercel.json                  # Rewrite de todas as URLs para a função
 │   ├── test/run.mjs                 # Testes locais (npm test)
 │   ├── wrangler.toml                # Alternativa: Cloudflare Workers
@@ -123,7 +125,9 @@ Eventos necessários: `MESSAGES_UPSERT`
 
 Ferramenta separada do NESTOR: pad de texto estilo dontpad em `link.neostore.app/<nome>`,
 com PIN numérico, exposição por tempo limitado e painel de superadmin em endereço próprio.
-Deploy automático na Vercel (Root Directory `link`, storage Upstash Redis via marketplace),
-domínio via CNAME na Cloudflare. O mesmo `app.js` também roda em Cloudflare Workers + KV.
+Deploy automático na Vercel (Root Directory `link`), domínio via CNAME na Cloudflare.
+Storage: tabela `neostore_link_kv` no projeto Supabase `neostore-site` (ref `cgaranykjfldeiruojct`),
+acessada só pela função `neostore_link_kv_op` com segredo (`LINK_DB_SECRET`). Nunca usar service key.
+Variáveis na Vercel: ADMIN_PASSWORD, ADMIN_PATH, BRAND_NAME, SUPABASE_URL, SUPABASE_ANON_KEY, LINK_DB_SECRET. O mesmo `app.js` também roda em Cloudflare Workers + KV.
 Sem dependências e sem build. `cd link && npm test` roda o fluxo completo localmente.
 Instruções em `link/README.md`.

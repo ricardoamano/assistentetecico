@@ -4,6 +4,7 @@
  */
 import { handleRequest } from '../app.js';
 import { createUpstashKV } from '../lib/upstash.js';
+import { createSupabaseKV } from '../lib/supabase.js';
 
 export default async function handler(req, res) {
   const proto = firstHeader(req, 'x-forwarded-proto') || 'https';
@@ -27,7 +28,8 @@ export default async function handler(req, res) {
   const request = new Request(url, { method, headers, body });
 
   const env = {
-    PADS: createUpstashKV(process.env),
+    // Storage: Supabase (padrão) ou Upstash Redis, conforme as variáveis presentes.
+    PADS: createSupabaseKV(process.env) || createUpstashKV(process.env),
     ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
     ADMIN_PATH: process.env.ADMIN_PATH,
     BRAND_NAME: process.env.BRAND_NAME,
@@ -35,7 +37,7 @@ export default async function handler(req, res) {
   if (!env.PADS) {
     res.statusCode = 500;
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
-    res.end(JSON.stringify({ error: 'Banco não configurado: conecte um Upstash Redis ao projeto na Vercel (KV_REST_API_URL / KV_REST_API_TOKEN).' }));
+    res.end(JSON.stringify({ error: 'Banco não configurado: defina SUPABASE_URL, SUPABASE_ANON_KEY e LINK_DB_SECRET (ou KV_REST_API_URL / KV_REST_API_TOKEN para Upstash).' }));
     return;
   }
 

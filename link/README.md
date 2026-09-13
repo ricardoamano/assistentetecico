@@ -13,7 +13,8 @@ Pad de texto estilo dontpad.com, só que fechado:
 |---------|---------|
 | `app.js` | O app inteiro (páginas, API, regras). Roda na Vercel e na Cloudflare. |
 | `api/index.js` | Adaptador Vercel: recebe todas as rotas e entrega ao `app.js`. |
-| `lib/upstash.js` | Storage na Vercel: Upstash Redis (banco gratuito do marketplace da Vercel). |
+| `lib/supabase.js` | Storage padrão: tabela no Supabase (projeto `neostore-site`), acessada por função protegida por segredo. |
+| `lib/upstash.js` | Storage alternativo: Upstash Redis (marketplace da Vercel). Usado só se as variáveis do Supabase não existirem. |
 | `vercel.json` | Manda todas as URLs para a função. |
 | `package.json` | Sem dependências. `npm test` roda os testes locais. |
 | `wrangler.toml` | Só para quem preferir rodar na Cloudflare Workers (alternativa). |
@@ -40,15 +41,23 @@ Depois disso, todo push no branch de produção publica sozinho.
    | `ADMIN_PASSWORD` | senha do superadmin (longa, não é o PIN) |
    | `ADMIN_PATH` | caminho do painel, ex.: `painel-ns-2026` (sem barra) |
    | `BRAND_NAME` | `Neostore Link` (opcional) |
+   | `SUPABASE_URL` | `https://cgaranykjfldeiruojct.supabase.co` (projeto `neostore-site`) |
+   | `SUPABASE_ANON_KEY` | chave pública **anon** do projeto (Supabase → Settings → API) |
+   | `LINK_DB_SECRET` | o segredo gravado na tabela `neostore_link_config` (Supabase → Table Editor) |
 
-4. Clique em **Deploy**. O primeiro deploy sobe, mas ainda vai dar erro de "banco não configurado". Normal, o banco vem no passo 2.
+4. Clique em **Deploy**.
 
-### 2. Criar o banco (Upstash Redis, gratuito)
-1. No projeto na Vercel: aba **Storage → Create Database → Upstash** (escolha **Redis**).
-2. Plano **Free**, região mais perto (São Paulo se aparecer, senão US East).
-3. Em **Connect Project**, confirme o projeto `neostore-link` e todos os ambientes. Deixe o prefixo de variáveis como está.
-   Isso cria sozinho as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`. Não precisa copiar nada.
-4. Vá em **Deployments → ⋯ no último deploy → Redeploy** para o app enxergar o banco.
+### 2. Banco
+Já está pronto: a migração `supabase/migrations/003_neostore_link.sql` foi aplicada no projeto
+Supabase `neostore-site`. Ela cria a tabela `neostore_link_kv`, a tabela `neostore_link_config`
+(onde fica o segredo) e a função `neostore_link_kv_op`. As tabelas não têm policies, então
+só a função acessa os dados, e a função exige o segredo. A Vercel usa apenas a chave pública.
+
+Para trocar o segredo: gere um novo, atualize a linha em `neostore_link_config` e a variável
+`LINK_DB_SECRET` na Vercel, e faça Redeploy.
+
+Alternativa sem Supabase: **Storage → Create Database → Upstash Redis** na Vercel e remova as
+três variáveis do Supabase. O app detecta `KV_REST_API_URL`/`KV_REST_API_TOKEN` sozinho.
 
 ### 3. Branch de produção
 O código está no branch `claude/gifted-gates-buazjl`. Escolha um dos dois:
@@ -112,7 +121,7 @@ Mudou algo? Commit + push no branch de produção. A Vercel publica em cerca de 
 
 ## Custo
 
-Vercel Hobby (gratuito) + Upstash Free: mais do que suficiente para uso interno.
+Vercel Hobby (gratuito) + tabela no Supabase que já existe: custo zero adicional.
 Atenção: o plano Hobby da Vercel é para uso pessoal/não comercial pelos termos deles. Se a Neostore usar isso como ferramenta da empresa em volume, o correto é o plano Pro (US$ 20/mês por membro). A alternativa Cloudflare abaixo não tem essa restrição no plano gratuito.
 
 ---
