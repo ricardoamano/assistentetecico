@@ -30,6 +30,10 @@ assistentetecico/
 │       └── nestor-escalacao.json    # Sub-fluxo: escalação
 ├── agent/
 │   └── nestor_system_prompt.txt     # System prompt do NESTOR
+├── design/                          # Design System Neostore (OBRIGATÓRIO em todo app)
+│   ├── neostore-design-system.md    # Tokens, tipografia, componentes, regras de logo
+│   ├── neostore.css                 # Variáveis CSS + componentes base para colar em HTML
+│   └── assets/                      # symbol.png, logo-dark.png, logo-light.png
 ├── link/                            # Neostore Link (link.neostore.app) — deploy na Vercel
 │   ├── app.js                       # App inteiro: pad com PIN + tempo + painel admin
 │   ├── api/index.js                 # Adaptador Vercel (todas as rotas → app.js)
@@ -120,6 +124,14 @@ POST https://seu-n8n.com/webhook/nestor-webhook
 ```
 
 Eventos necessários: `MESSAGES_UPSERT`
+
+## Design System Neostore (regra para todo app deste repositório)
+
+Todo app, painel ou página criada aqui usa o Design System Neostore: `design/neostore-design-system.md`
+(tokens) e `design/neostore.css` (base pronta). Resumo: fonte Manrope (mono JetBrains Mono), primária teal
+`#1F6E78`, secundária roxo `#4A1F4F`, texto ink `#0E1112`, fundo paper `#F4F5F6`, cartões brancos com raio 14px,
+botões teal com raio 10px. Tema claro por padrão. Logo em `design/assets/`. Não usar laranja/amarelo/azul
+como destaque. Origem dos tokens: repositório `neostore-website` (tailwind.config.ts / globals.css).
 
 ## Neostore Link (`link/`)
 

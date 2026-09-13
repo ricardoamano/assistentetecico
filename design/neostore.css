@@ -1,0 +1,74 @@
+/* Design System Neostore — base para apps HTML. Ver design/neostore-design-system.md */
+/* Fonte: <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"> */
+
+:root {
+  --teal-50: #E6F0F2; --teal-100: #C2DBDF; --teal-200: #8FB9C0; --teal-300: #5A95A0; --teal-400: #357683;
+  --teal-500: #1F6E78; --teal-600: #185863; --teal-700: #12454E; --teal-800: #0D343B; --teal-900: #082529;
+  --purple-300: #82518A; --purple-400: #5C2F65; --purple-500: #4A1F4F; --purple-600: #3A1840;
+  --ink: #0E1112; --graphite: #1A1F22; --slate: #2A3033; --steel: #4A5256; --fog: #8C9498;
+  --mist: #C3C9CC; --cloud: #E2E5E7; --paper: #F4F5F6; --white: #FFFFFF;
+  --success: #1B7F4B; --danger: #B3261E; --warning: #9A6700;
+
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+
+  --radius: 6px; --radius-lg: 10px; --radius-xl: 14px; --radius-2xl: 20px;
+  --shadow-sm: 0 1px 2px rgba(14,17,18,.06), 0 1px 1px rgba(14,17,18,.04);
+  --shadow-md: 0 4px 12px rgba(14,17,18,.06), 0 1px 2px rgba(14,17,18,.04);
+  --shadow-lg: 0 14px 32px rgba(14,17,18,.08), 0 2px 4px rgba(14,17,18,.04);
+  --focus: 0 0 0 3px rgba(31,110,120,.28);
+  --ease: cubic-bezier(.2,0,0,1); --fast: 120ms; --base: 180ms; --slow: 320ms;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font: 15px/1.5 var(--font-sans); color: var(--ink); background: var(--paper);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+h1, h2, h3 { font-weight: 700; letter-spacing: -0.015em; line-height: 1.12; margin: 0 0 6px; }
+h1 { font-size: 22px; } h2 { font-size: 18px; } h3 { font-size: 16px; color: var(--purple-500); }
+p { margin: 0 0 12px; color: var(--steel); }
+a { color: var(--teal-500); }
+::selection { background: var(--teal-500); color: #fff; }
+
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--teal-500); }
+.muted { color: var(--steel); font-size: 13px; }
+.mono { font-family: var(--font-mono); }
+
+label { display: block; font-size: 13px; font-weight: 600; color: var(--steel); margin: 12px 0 6px; }
+input, textarea, select {
+  width: 100%; background: var(--white); color: var(--ink); border: 1px solid var(--mist);
+  border-radius: var(--radius-lg); padding: 11px 12px; font: inherit; outline: none;
+  transition: border-color var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+input::placeholder, textarea::placeholder { color: var(--fog); }
+input:focus, textarea:focus, select:focus { border-color: var(--teal-500); box-shadow: var(--focus); }
+
+button, .btn {
+  cursor: pointer; border: 1px solid transparent; border-radius: var(--radius-lg); padding: 11px 16px;
+  font: inherit; font-weight: 600; background: var(--teal-500); color: #fff;
+  transition: background var(--fast) var(--ease), box-shadow var(--fast) var(--ease);
+}
+button:hover { background: var(--teal-600); }
+button:active { background: var(--teal-700); }
+button:focus-visible { box-shadow: var(--focus); outline: none; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.ghost { background: var(--white); color: var(--ink); border-color: var(--mist); }
+button.ghost:hover { background: var(--paper); }
+button.danger { background: var(--danger); }
+button.danger:hover { background: #8F1E18; }
+
+.card { background: var(--white); border: 1px solid var(--cloud); border-radius: var(--radius-xl); padding: 22px; box-shadow: var(--shadow-sm); }
+.chip { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--teal-50); color: var(--teal-700); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: var(--teal-500); color: #fff; font-weight: 600; font-size: 12px; text-align: left; padding: 10px 12px; letter-spacing: .04em; text-transform: uppercase; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--cloud); vertical-align: top; }
+tbody tr:nth-child(even) td { background: var(--teal-50); }
+tr.total td { background: var(--cloud); font-weight: 700; }
+code { font-family: var(--font-mono); font-size: 13px; background: var(--paper); border: 1px solid var(--cloud); padding: 2px 6px; border-radius: var(--radius); }
+
+.msg { min-height: 20px; font-size: 13px; margin-top: 10px; }
+.msg.err { color: var(--danger); }
+.msg.ok { color: var(--success); }
