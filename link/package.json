@@ -1,0 +1,14 @@
+{
+  "name": "neostore-link",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pad de texto com PIN e tempo de exposição (link.neostore.app)",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "test": "node test/run.mjs",
+    "deploy:cloudflare": "wrangler deploy"
+  }
+}

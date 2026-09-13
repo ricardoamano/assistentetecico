@@ -7,11 +7,18 @@
  *  - o painel de superadmin fica em outro endereço (/admin por padrão,
  *    configurável pela variável ADMIN_PATH) e exige senha própria.
  *
- * Roda em Cloudflare Workers. Precisa de:
- *  - KV binding chamado PADS
- *  - Secret ADMIN_PASSWORD (senha do superadmin)
- *  - (opcional) variável ADMIN_PATH   — caminho do painel, ex.: "painel-secreto"
- *  - (opcional) variável BRAND_NAME   — nome exibido, padrão "Neostore Link"
+ * Este arquivo é o app inteiro e roda em dois lugares:
+ *  - Vercel: api/index.js importa handleRequest() daqui (storage: Upstash Redis)
+ *  - Cloudflare Workers: cole este arquivo como está (storage: KV binding PADS)
+ *
+ * Configuração (variáveis de ambiente):
+ *  - ADMIN_PASSWORD  (obrigatória) senha do superadmin
+ *  - ADMIN_PATH      (opcional) caminho do painel, ex.: "painel-secreto"; padrão "admin"
+ *  - BRAND_NAME      (opcional) nome exibido, padrão "Neostore Link"
+ *
+ * env.PADS precisa ser um storage com a interface do Cloudflare KV:
+ *   get(key, 'json'|undefined), put(key, value, {expirationTtl}), delete(key),
+ *   list({prefix, cursor}) -> {keys:[{name}], list_complete, cursor}
  */
 
 const DEFAULTS = {
@@ -30,16 +37,17 @@ const DEFAULTS = {
 
 const RESERVED = new Set(['api', 'admin', 'favicon.ico', 'robots.txt', 'static']);
 
-export default {
-  async fetch(request, env) {
-    try {
-      return await handle(request, env);
-    } catch (err) {
-      console.error(err);
-      return json({ error: 'Erro interno' }, 500);
-    }
-  },
-};
+export async function handleRequest(request, env) {
+  try {
+    return await handle(request, env);
+  } catch (err) {
+    console.error(err);
+    return json({ error: 'Erro interno' }, 500);
+  }
+}
+
+// Cloudflare Workers usa o export default.
+export default { fetch: handleRequest };
 
 /* ------------------------------------------------------------------ */
 /* Roteamento                                                          */
@@ -97,7 +105,7 @@ async function padApiHandler(request, env, rawSlug, action) {
   const settings = await getSettings(env);
 
   if (action === 'unlock') {
-    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const ip = clientIp(request);
     const rlKey = `rl:${slug}:${ip}`;
     const attempts = Number((await env.PADS.get(rlKey)) || 0);
     if (attempts >= DEFAULTS.rateLimitMax) {
@@ -402,11 +410,22 @@ function byteLength(str) {
 function sameOrigin(request) {
   const origin = request.headers.get('Origin');
   if (!origin) return true; // fetch same-origin sem Origin (ex.: GET) ou clientes não-browser
+  const host = request.headers.get('X-Forwarded-Host') || new URL(request.url).host;
   try {
-    return new URL(origin).host === new URL(request.url).host;
+    return new URL(origin).host === host;
   } catch {
     return false;
   }
+}
+
+function clientIp(request) {
+  const h = request.headers;
+  return (
+    h.get('CF-Connecting-IP') ||
+    h.get('X-Real-IP') ||
+    (h.get('X-Forwarded-For') || '').split(',')[0].trim() ||
+    'unknown'
+  );
 }
 
 async function readJson(request) {

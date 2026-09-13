@@ -6,7 +6,7 @@
 #   npx wrangler deploy
 
 name = "neostore-link"
-main = "worker.js"
+main = "app.js"
 compatibility_date = "2026-01-01"
 
 [[kv_namespaces]]

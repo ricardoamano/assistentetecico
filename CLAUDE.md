@@ -29,10 +29,14 @@ assistentetecico/
 │       └── nestor-escalacao.json    # Sub-fluxo: escalação
 ├── agent/
 │   └── nestor_system_prompt.txt     # System prompt do NESTOR
-├── link/                            # Neostore Link (link.neostore.app)
-│   ├── worker.js                    # Cloudflare Worker: pad com PIN + tempo + painel admin
-│   ├── wrangler.toml                # Deploy via CLI (opcional)
-│   └── README.md                    # Instalação passo a passo pelo painel Cloudflare
+├── link/                            # Neostore Link (link.neostore.app) — deploy na Vercel
+│   ├── app.js                       # App inteiro: pad com PIN + tempo + painel admin
+│   ├── api/index.js                 # Adaptador Vercel (todas as rotas → app.js)
+│   ├── lib/upstash.js               # Storage Upstash Redis (marketplace Vercel)
+│   ├── vercel.json                  # Rewrite de todas as URLs para a função
+│   ├── test/run.mjs                 # Testes locais (npm test)
+│   ├── wrangler.toml                # Alternativa: Cloudflare Workers
+│   └── README.md                    # Instalação passo a passo
 ├── .env.example                     # Template de variáveis de ambiente
 └── CLAUDE.md                        # Este arquivo
 ```
@@ -119,4 +123,7 @@ Eventos necessários: `MESSAGES_UPSERT`
 
 Ferramenta separada do NESTOR: pad de texto estilo dontpad em `link.neostore.app/<nome>`,
 com PIN numérico, exposição por tempo limitado e painel de superadmin em endereço próprio.
-Roda em Cloudflare Workers + KV, arquivo único, sem build. Instruções em `link/README.md`.
+Deploy automático na Vercel (Root Directory `link`, storage Upstash Redis via marketplace),
+domínio via CNAME na Cloudflare. O mesmo `app.js` também roda em Cloudflare Workers + KV.
+Sem dependências e sem build. `cd link && npm test` roda o fluxo completo localmente.
+Instruções em `link/README.md`.

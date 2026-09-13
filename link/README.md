@@ -7,64 +7,71 @@ Pad de texto estilo dontpad.com, só que fechado:
 - Quem abriu pode **editar** durante a janela (autosave). O admin pode deixar um link como somente leitura.
 - O painel de **superadmin** fica em outro endereço (`/admin` por padrão, você pode trocar) com senha própria. Lá você cria links, define PIN, tempo e conteúdo, e ajusta o tempo padrão global.
 
-Tudo roda em um único arquivo (`worker.js`) na Cloudflare Workers, plano gratuito. Não tem banco para pagar, nem servidor para manter.
+## Arquivos
+
+| Arquivo | O que é |
+|---------|---------|
+| `app.js` | O app inteiro (páginas, API, regras). Roda na Vercel e na Cloudflare. |
+| `api/index.js` | Adaptador Vercel: recebe todas as rotas e entrega ao `app.js`. |
+| `lib/upstash.js` | Storage na Vercel: Upstash Redis (banco gratuito do marketplace da Vercel). |
+| `vercel.json` | Manda todas as URLs para a função. |
+| `package.json` | Sem dependências. `npm test` roda os testes locais. |
+| `wrangler.toml` | Só para quem preferir rodar na Cloudflare Workers (alternativa). |
+| `test/run.mjs` | Testes: fluxo completo nas duas plataformas, sem serviços externos. |
 
 ---
 
-## O que você precisa
+## Instalação na Vercel com deploy automático
 
-1. Conta na Cloudflare (gratuita): https://dash.cloudflare.com
-2. O domínio `neostore.app` adicionado como zona na Cloudflare (DNS gerenciado por ela). Se ainda não está, adicione em **Websites → Add a site** e troque os nameservers no registrador.
+Depois disso, todo push no branch de produção publica sozinho.
 
----
+### 1. Importar o repositório
+1. https://vercel.com/new → **Import Git Repository** → escolha `ricardoamano/assistentetecico`.
+   Se a Vercel ainda não vê o GitHub, clique em **Adjust GitHub App Permissions** e libere o repositório.
+2. Na tela de configuração:
+   - **Project Name**: `neostore-link`
+   - **Framework Preset**: `Other`
+   - **Root Directory**: clique em **Edit** e escolha `link` (importante: o app fica nessa pasta)
+   - Build Command / Output Directory: deixe vazio
+3. Em **Environment Variables**, adicione:
 
-## Instalação pelo painel (sem instalar nada no computador)
+   | Nome | Valor |
+   |------|-------|
+   | `ADMIN_PASSWORD` | senha do superadmin (longa, não é o PIN) |
+   | `ADMIN_PATH` | caminho do painel, ex.: `painel-ns-2026` (sem barra) |
+   | `BRAND_NAME` | `Neostore Link` (opcional) |
 
-### 1. Criar o Worker
-1. No painel: **Workers & Pages → Create → Create Worker**.
-2. Nome: `neostore-link`. Clique em **Deploy** (sobe um "Hello World", tudo bem).
-3. Clique em **Edit code**, apague tudo, cole o conteúdo de `worker.js` e clique em **Deploy**.
+4. Clique em **Deploy**. O primeiro deploy sobe, mas ainda vai dar erro de "banco não configurado". Normal, o banco vem no passo 2.
 
-### 2. Criar o armazenamento (KV)
-1. Menu **Storage & Databases → KV → Create a namespace**. Nome: `neostore-link-pads`.
-2. Volte no Worker → **Settings → Bindings → Add → KV namespace**.
-   - Variable name: `PADS` (exatamente assim, maiúsculo)
-   - KV namespace: `neostore-link-pads`
-3. Salve.
+### 2. Criar o banco (Upstash Redis, gratuito)
+1. No projeto na Vercel: aba **Storage → Create Database → Upstash** (escolha **Redis**).
+2. Plano **Free**, região mais perto (São Paulo se aparecer, senão US East).
+3. Em **Connect Project**, confirme o projeto `neostore-link` e todos os ambientes. Deixe o prefixo de variáveis como está.
+   Isso cria sozinho as variáveis `KV_REST_API_URL` e `KV_REST_API_TOKEN`. Não precisa copiar nada.
+4. Vá em **Deployments → ⋯ no último deploy → Redeploy** para o app enxergar o banco.
 
-### 3. Senha do superadmin e endereço do painel
-Em **Settings → Variables and Secrets → Add**:
+### 3. Branch de produção
+O código está no branch `claude/gifted-gates-buazjl`. Escolha um dos dois:
 
-| Tipo | Nome | Valor |
-|------|------|-------|
-| **Secret** | `ADMIN_PASSWORD` | a senha do superadmin (forte, não é o PIN) |
-| Text | `ADMIN_PATH` | caminho do painel, ex.: `painel-ns-2026` (sem barra) |
-| Text | `BRAND_NAME` | `Neostore Link` (opcional) |
+- **Simples**: no projeto, **Settings → Git → Production Branch** → digite `claude/gifted-gates-buazjl` → Save. A partir daí, cada push nesse branch publica em produção.
+- **Organizado**: faça o merge desse branch no branch principal do repositório. A Vercel já usa o branch padrão como produção.
 
-Salve e faça **Deploy** de novo se o painel pedir.
+Qualquer outro branch gera um **preview** com URL própria, sem mexer na produção.
 
-### 4. Domínio `link.neostore.app`
-1. Worker → **Settings → Domains & Routes → Add → Custom domain**.
-2. Digite `link.neostore.app` e confirme. A Cloudflare cria o DNS e o certificado sozinha (1 a 5 minutos).
+### 4. Domínio `link.neostore.app` (DNS na Cloudflare)
+1. Na Vercel: **Settings → Domains → Add** → `link.neostore.app`. A Vercel mostra o registro esperado: `CNAME` → `cname.vercel-dns.com`.
+2. Na Cloudflare: **neostore.app → DNS → Add record**:
+   - Type: `CNAME`
+   - Name: `link`
+   - Target: `cname.vercel-dns.com`
+   - **Proxy status: DNS only (nuvem cinza)**. Com a nuvem laranja a Vercel não consegue emitir o certificado.
+3. Volte na Vercel e aguarde o domínio ficar **Valid Configuration** (1 a 10 minutos).
 
 ### 5. Testar
-1. Abra `https://link.neostore.app/painel-ns-2026` (ou o caminho que você definiu em `ADMIN_PATH`).
-2. Entre com a senha do superadmin.
-3. Ajuste o **tempo padrão** (segundos).
-4. Crie um link: nome `teste`, PIN `2468`, conteúdo qualquer. Clique em **Salvar link**.
-5. Abra `https://link.neostore.app/teste` em outra aba ou no celular, digite o PIN e veja o cronômetro.
-
----
-
-## Instalação por linha de comando (alternativa)
-
-```bash
-cd link
-npx wrangler login
-npx wrangler kv namespace create PADS     # copie o "id" para o wrangler.toml
-npx wrangler secret put ADMIN_PASSWORD
-npx wrangler deploy
-```
+1. Abra `https://link.neostore.app/painel-ns-2026` (ou o caminho que definiu em `ADMIN_PATH`).
+2. Entre com a senha do superadmin e ajuste o **tempo padrão**.
+3. Crie um link: nome `teste`, PIN `2468`, conteúdo qualquer → **Salvar link**.
+4. Abra `https://link.neostore.app/teste` no celular, digite o PIN, veja o cronômetro.
 
 ---
 
@@ -83,24 +90,41 @@ npx wrangler deploy
 
 | O que | Valor | Onde mudar |
 |-------|-------|------------|
-| Tempo de exposição | 5 s a 3600 s, padrão 60 s | painel (global ou por link); limites em `DEFAULTS` no `worker.js` |
+| Tempo de exposição | 5 s a 3600 s, padrão 60 s | painel (global ou por link); limites em `DEFAULTS` no `app.js` |
 | PIN | 4 a 8 dígitos | `DEFAULTS.pinMin/pinMax` |
 | Tentativas de PIN | 8 por IP a cada 10 min por link | `DEFAULTS.rateLimitMax/rateLimitWindow` |
 | Sessão do superadmin | 12 horas | `DEFAULTS.adminSessionHours` |
 | Tamanho do texto | 500 KB por link | `DEFAULTS.contentMaxBytes` |
-| Cores | variáveis no topo de `BASE_CSS` | `worker.js` |
+| Cores | variáveis no topo de `BASE_CSS` | `app.js` |
+
+Mudou algo? Commit + push no branch de produção. A Vercel publica em cerca de 1 minuto.
 
 ---
 
 ## O que é e o que não é seguro aqui
 
-- O PIN é curto e numérico porque você pediu simples. O limitador de tentativas dificulta chute automático, mas **não use para senha de banco, cartão ou dados de cliente**. É para informação operacional de evento (wifi, ramal, endereço, checklist).
+- O PIN é curto e numérico porque foi pedido simples. O limitador de tentativas dificulta chute automático, mas **não use para senha de banco, cartão ou dados de cliente**. É para informação operacional de evento (wifi, ramal, endereço, checklist).
 - O PIN fica visível no painel de propósito, para você conseguir repassar à equipe.
 - Quem tirar print durante a janela fica com o texto. O tempo limita exposição acidental, não vazamento intencional.
 - O painel só é protegido pela senha do superadmin. Use senha longa e troque o `ADMIN_PATH` para algo não óbvio.
-- Se você trocar `ADMIN_PASSWORD`, todas as sessões do painel caem (é o esperado).
-- Edição é "último que salva vence". Para duas pessoas digitando ao mesmo tempo no mesmo link, o texto de uma pode sobrescrever o da outra.
+- Se trocar `ADMIN_PASSWORD`, todas as sessões do painel caem (é o esperado).
+- Edição é "último que salva vence". Duas pessoas digitando ao mesmo tempo no mesmo link podem sobrescrever uma à outra.
 
 ## Custo
 
-Plano gratuito da Cloudflare Workers: 100 mil requisições/dia e KV com 1 GB. Para uso interno da equipe, não passa disso.
+Vercel Hobby (gratuito) + Upstash Free: mais do que suficiente para uso interno.
+Atenção: o plano Hobby da Vercel é para uso pessoal/não comercial pelos termos deles. Se a Neostore usar isso como ferramenta da empresa em volume, o correto é o plano Pro (US$ 20/mês por membro). A alternativa Cloudflare abaixo não tem essa restrição no plano gratuito.
+
+---
+
+## Alternativa: Cloudflare Workers (sem Vercel)
+
+O mesmo `app.js` roda como Worker, sem mudar nada.
+
+Pelo painel:
+1. **Workers & Pages → Create → Create Worker** → nome `neostore-link` → Deploy → **Edit code** → cole o `app.js` inteiro → Deploy.
+2. **Storage & Databases → KV → Create namespace** `neostore-link-pads`. No Worker: **Settings → Bindings → Add → KV namespace**, variável `PADS`.
+3. **Settings → Variables and Secrets**: secret `ADMIN_PASSWORD`, texto `ADMIN_PATH` e `BRAND_NAME`.
+4. **Settings → Domains & Routes → Add → Custom domain** → `link.neostore.app` (a Cloudflare cria o DNS sozinha).
+
+Por linha de comando: `npx wrangler kv namespace create PADS` (cole o id no `wrangler.toml`), `npx wrangler secret put ADMIN_PASSWORD`, `npx wrangler deploy`.
