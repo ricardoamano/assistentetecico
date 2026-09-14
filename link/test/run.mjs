@@ -5,7 +5,7 @@
  */
 import http from 'node:http';
 import assert from 'node:assert/strict';
-import app from '../app.js';
+import app, { parseItems, qrPayload } from '../app.js';
 import handler from '../api/index.js';
 
 const ORIGIN = 'https://link.neostore.app';
@@ -97,6 +97,8 @@ async function scenario(name, send) {
   };
 
   let r = await req('/'); assert.equal(r.status, 200); assert.match(r.data, /Abrir um link/);
+  r = await req('/static/qr.js'); assert.equal(r.status, 200); assert.match(r.headers.get('Content-Type'), /javascript/); assert.match(r.data, /qrcode/);
+  r = await req('/evento-abc'); assert.match(r.data, /function parseItems/); assert.match(r.data, /static\/qr\.js/);
   r = await req('/painel'); assert.equal(r.status, 200); assert.match(r.data, /superadmin/);
   r = await req('/admin'); assert.equal(r.status, 404);
   r = await req('/evento-abc'); assert.equal(r.status, 200); assert.match(r.data, /Digite o PIN/);
@@ -146,6 +148,42 @@ async function scenario(name, send) {
   cookie = 'nl_admin=';
   r = await req('/api/admin/me'); assert.equal(r.status, 401);
   console.log(`✔ ${name}`);
+}
+
+/* ---------- 0. parser de padrões ---------- */
+{
+  const txt = [
+    'Ficha do evento ABC',
+    'Site do cliente: https://cliente.com.br/evento?x=1',
+    'Painel: link.neostore.app/evento-abc',
+    'www.google.com e neostore.app',
+    'Wifi: Evento2026 / abc!123',
+    'rede: Producao ; senha: s3nh4',
+    'WIFI:T:WPA;S:Palco A;P:pa\\;ss;;',
+    'Senha do notebook: Neo@2026',
+    'IP do roteador: 192.168.0.1',
+    'Servidor = 10.0.0.5:8080',
+    'Contato: tecnico@neostore.com.br',
+    'Versão do app 1.2.3 sem link',
+    'linha solta sem padrão',
+  ].join('\n');
+  const it = parseItems(txt);
+  const by = (t) => it.filter((i) => i.type === t).map((i) => i.value);
+  assert.deepEqual(by('url'), ['https://cliente.com.br/evento?x=1', 'link.neostore.app/evento-abc', 'www.google.com', 'neostore.app']);
+  assert.equal(it.find((i) => i.value === 'link.neostore.app/evento-abc').href, 'https://link.neostore.app/evento-abc');
+  assert.equal(it.find((i) => i.value === 'link.neostore.app/evento-abc').label, 'Painel');
+  assert.deepEqual(it.filter((i) => i.type === 'wifi').map((i) => [i.value, i.pass]), [['Evento2026', 'abc!123'], ['Producao', 's3nh4'], ['Palco A', 'pa;ss']]);
+  assert.deepEqual(by('text'), ['Neo@2026']);
+  assert.deepEqual(by('ip'), ['192.168.0.1', '10.0.0.5:8080']);
+  assert.equal(it.find((i) => i.type === 'ip' && i.value === '10.0.0.5:8080').href, 'http://10.0.0.5:8080');
+  assert.deepEqual(by('email'), ['tecnico@neostore.com.br']);
+  assert.ok(!it.some((i) => i.value === 'neostore.com.br'), 'domínio do e-mail não vira link');
+  assert.ok(!it.some((i) => i.value.includes('1.2.3')), 'versão não vira IP/link');
+  assert.equal(qrPayload(it.find((i) => i.value === 'Evento2026')), 'WIFI:T:WPA;S:Evento2026;P:abc!123;;');
+  assert.equal(qrPayload(it.find((i) => i.value === 'Palco A')), 'WIFI:T:WPA;S:Palco A;P:pa\\;ss;;');
+  assert.equal(qrPayload(it.find((i) => i.type === 'email')), 'mailto:tecnico@neostore.com.br');
+  assert.deepEqual(parseItems(''), []);
+  console.log('✔ parser de padrões (url, ip, e-mail, wifi, nome: valor)');
 }
 
 /* ---------- 1. app.js direto ---------- */

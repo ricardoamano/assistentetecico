@@ -38,6 +38,7 @@ assistentetecico/
 │   ├── api/index.js                 # Adaptador Vercel (todas as rotas → app.js)
 │   ├── lib/supabase.js              # Storage padrão: Supabase via função com segredo
 │   ├── lib/upstash.js               # Storage alternativo: Upstash Redis
+│   ├── lib/qrcode-src.js            # Biblioteca de QR (MIT) servida em /static/qr.js
 │   ├── vercel.json                  # Rewrite de todas as URLs para a função
 │   ├── test/run.mjs                 # Testes locais (npm test)
 │   ├── wrangler.toml                # Alternativa: Cloudflare Workers
@@ -137,6 +138,9 @@ erro `#B83A3A`. Sem emoji, sem ponto de exclamação, sem gradiente, sem bounce.
 
 Ferramenta separada do NESTOR: pad de texto estilo dontpad em `link.neostore.app/<nome>`,
 com PIN numérico, exposição por tempo limitado e painel de superadmin em endereço próprio.
+Uso real: ficha de configuração de notebooks, tablets e celulares em eventos. O texto vira ações:
+`parseItems()` em app.js reconhece links, IPs, e-mails, `wifi: REDE / senha` e `Nome: valor` e gera
+botões Abrir, Copiar e QR (QR de Wi-Fi conecta o aparelho). Biblioteca de QR embutida, sem CDN.
 Deploy automático na Vercel (Root Directory `link`), domínio via CNAME na Cloudflare.
 Storage: tabela `neostore_link_kv` no projeto Supabase `neostore-site` (ref `cgaranykjfldeiruojct`),
 acessada só pela função `neostore_link_kv_op` com segredo (`LINK_DB_SECRET`). Nunca usar service key.

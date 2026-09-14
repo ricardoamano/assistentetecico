@@ -6,6 +6,21 @@ Pad de texto estilo dontpad.com, só que fechado:
 - Depois do PIN, o texto fica na tela por **N segundos** (barra + cronômetro). Zerou, a tela volta para o PIN e o texto some.
 - Quem abriu pode **editar** durante a janela (autosave). O admin pode deixar um link como somente leitura.
 - O painel de **superadmin** fica em outro endereço (`/admin` por padrão, você pode trocar) com senha própria. Lá você cria links, define PIN, tempo e conteúdo, e ajusta o tempo padrão global.
+- O texto vira **ações**: o app reconhece padrões e mostra botões abaixo do texto.
+
+## Padrões reconhecidos no texto
+
+| Você escreve | O que aparece |
+|--------------|---------------|
+| `https://site.com/x`, `www.site.com`, `dominio.com.br/pasta` | **Abrir** (nova aba), **Copiar**, **QR** |
+| `192.168.0.1` ou `10.0.0.5:8080` | **Abrir** (http://ip), **Copiar**, **QR** |
+| `nome@empresa.com.br` | **Abrir** (e-mail), **Copiar**, **QR** |
+| `wifi: NOME_DA_REDE / senha` (ou `rede: X ; senha: Y`) | **Copiar senha**, **Copiar rede**, **QR** que conecta o tablet ou celular na rede ao apontar a câmera |
+| `WIFI:T:WPA;S:rede;P:senha;;` (formato padrão) | idem |
+| `Qualquer nome: valor` (ex.: `Senha do notebook: Neo@2026`) | **Copiar** |
+
+Os QR são gerados no próprio navegador (biblioteca `qrcode-generator`, MIT, servida em `/static/qr.js`). Nada do conteúdo sai para serviços externos.
+No painel, cada link tem um botão **QR** com o endereço do pad, para entregar a um tablet ou celular sem digitar.
 
 ## Arquivos
 
@@ -15,6 +30,7 @@ Pad de texto estilo dontpad.com, só que fechado:
 | `api/index.js` | Adaptador Vercel: recebe todas as rotas e entrega ao `app.js`. |
 | `lib/supabase.js` | Storage padrão: tabela no Supabase (projeto `neostore-site`), acessada por função protegida por segredo. |
 | `lib/upstash.js` | Storage alternativo: Upstash Redis (marketplace da Vercel). Usado só se as variáveis do Supabase não existirem. |
+| `lib/qrcode-src.js` | Biblioteca de QR embutida como texto, servida em `/static/qr.js`. |
 | `vercel.json` | Manda todas as URLs para a função. |
 | `package.json` | Sem dependências. `npm test` roda os testes locais. |
 | `wrangler.toml` | Só para quem preferir rodar na Cloudflare Workers (alternativa). |
@@ -131,7 +147,7 @@ Atenção: o plano Hobby da Vercel é para uso pessoal/não comercial pelos term
 O mesmo `app.js` roda como Worker, sem mudar nada.
 
 Pelo painel:
-1. **Workers & Pages → Create → Create Worker** → nome `neostore-link` → Deploy → **Edit code** → cole o `app.js` inteiro → Deploy.
+1. **Workers & Pages → Create → Create Worker** → nome `neostore-link` → Deploy → **Edit code** → crie os arquivos `app.js` e `lib/qrcode-src.js` com o conteúdo do repositório → Deploy. (Ou use a linha de comando abaixo, que empacota tudo sozinha.)
 2. **Storage & Databases → KV → Create namespace** `neostore-link-pads`. No Worker: **Settings → Bindings → Add → KV namespace**, variável `PADS`.
 3. **Settings → Variables and Secrets**: secret `ADMIN_PASSWORD`, texto `ADMIN_PATH` e `BRAND_NAME`.
 4. **Settings → Domains & Routes → Add → Custom domain** → `link.neostore.app` (a Cloudflare cria o DNS sozinha).
