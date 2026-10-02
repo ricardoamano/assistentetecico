@@ -3,6 +3,9 @@
 ## O que é
 Assistente de WhatsApp para equipe técnica interna da Neostore.
 Responde dúvidas técnicas, agenda de eventos e escalação de técnicos.
+Módulo **Secretário**: guarda tudo que é enviado pelo WhatsApp (textos, medidas,
+fotos, vídeos, PDFs, contatos) e devolve no WhatsApp quando pedido.
+Guia: `docs/SECRETARIO.md`.
 
 ## Stack
 - **Interface**: WhatsApp via Evolution API
@@ -20,13 +23,17 @@ assistentetecico/
 ├── supabase/
 │   └── migrations/
 │       ├── 001_initial_schema.sql   # Tabelas + pgvector + RLS
-│       └── 002_seed_data.sql        # Usuário admin inicial
+│       ├── 002_seed_data.sql        # Usuário admin inicial
+│       └── 003_secretario.sql       # Memória do Secretário + bucket de arquivos
 ├── n8n/
 │   └── flows/
 │       ├── nestor-main.json         # Fluxo principal
 │       ├── nestor-suporte.json      # Sub-fluxo: suporte técnico
 │       ├── nestor-agenda.json       # Sub-fluxo: agenda
-│       └── nestor-escalacao.json    # Sub-fluxo: escalação
+│       ├── nestor-escalacao.json    # Sub-fluxo: escalação
+│       └── nestor-secretario.json   # Secretário: guardar/buscar/enviar arquivos
+├── docs/
+│   └── SECRETARIO.md                # Guia de instalação e uso do Secretário
 ├── agent/
 │   └── nestor_system_prompt.txt     # System prompt do NESTOR
 ├── .env.example                     # Template de variáveis de ambiente
@@ -41,16 +48,21 @@ assistentetecico/
 | `knowledge_base` | Manuais e docs indexados com pgvector |
 | `conversation_history` | Histórico de mensagens por usuário |
 | `audit_log` | Log de todas as interações |
+| `nestor_memoria` | Memória do Secretário (itens + dados + embedding); arquivos no bucket `nestor-arquivos` |
+
+Funções RPC do Secretário: `buscar_memoria` (busca híbrida: pgvector + texto + trigram)
+e `resumo_categorias`.
 
 ## Ordem de construção
 
-1. **Supabase** — Executar migrations em ordem (`001`, `002`)
+1. **Supabase** — Executar migrations em ordem (`001`, `002`, `003`)
 2. **N8N** — Importar `nestor-main.json`, configurar credenciais
 3. **Testar auth** — Número autorizado e não autorizado
 4. **N8N** — Importar e conectar `nestor-agenda.json`
 5. **N8N** — Importar e conectar `nestor-escalacao.json`
 6. **N8N** — Importar e conectar `nestor-suporte.json`
 7. **Testar** — Fluxo completo com texto e áudio
+8. **N8N** — Importar `nestor-secretario.json` (ver `docs/SECRETARIO.md`)
 
 ## Credenciais N8N necessárias
 
@@ -110,3 +122,7 @@ POST https://seu-n8n.com/webhook/nestor-webhook
 ```
 
 Eventos necessários: `MESSAGES_UPSERT`
+
+Secretário: webhook próprio em `/webhook/nestor-secretario`. A Evolution envia
+uma instância para uma única URL — enquanto o `nestor-main` estiver incompleto,
+aponte o webhook para o Secretário.
