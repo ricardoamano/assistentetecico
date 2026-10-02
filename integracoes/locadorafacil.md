@@ -84,3 +84,28 @@ Gravações diretas não geram log sozinhas; para rastro, inserir em `"AuditLog"
 tipo 'ALTERACAO', modulo, acao). A função de itens já faz isso.
 
 Referência completa do esquema: `prisma/schema.prisma` e `CONTEXTO.md` no repo `ricardoamano/locadorafacil`.
+
+## Base de conhecimento do NESTOR (schema `nestor`, neste mesmo banco)
+Desde 2026-10-02 o banco do NESTOR fica **aqui**, no schema `nestor` (fora do `public`, invisível
+para o app/Prisma e para a API pública). `bridge_nestor` tem leitura e escrita.
+
+| Tabela | Uso |
+|---|---|
+| `nestor.memoria` | Conhecimento: GitBook (#1–#47), medidas, tutoriais, anexos do grupo "Informações" |
+| `nestor.usuarios` / `nestor.historico` / `nestor.auditoria` | Reservadas para o assistente |
+
+Buscar (texto + título parecido; ordena por relevância):
+```sql
+SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('altura do totem branco', NULL, false, NULL, 5);
+```
+Guardar uma informação nova:
+```sql
+INSERT INTO nestor.memoria (titulo, categoria, tags, descricao, conteudo, dados, criado_por)
+VALUES ('Etiqueta Zebra 100x50', 'etiquetas', ARRAY['zebra','etiqueta'], 'Etiqueta térmica',
+        '100 mm x 50 mm', '{"largura_mm":100,"altura_mm":50}', 'grupo-informacoes')
+RETURNING codigo;
+```
+Regras: responder só com o que achar e citar o #código; não usar dados de um item para outro
+(ex.: Totem Branco #30 = item 0019 ≠ Totem Preto #31 = item 0018). Se a informação é de um
+equipamento do cadastro, acrescentar também em `"Item".especificacoes` (sem apagar o que já existe).
+Arquivos: bucket privado `nestor-arquivos` no Storage deste projeto.

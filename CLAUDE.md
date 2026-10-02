@@ -17,16 +17,19 @@ Serve só para ele confirmar que a sessão está neste projeto — não é senha
 - **Servidor**: VPS Hostinger (ativa). **Portal web**: `nestor.neostore.app` = neostore-portal
   (Express + PM2), recebe menções do WhatsApp e roda `claude -p` como usuário `neostore`
   em `/root/projects/locadorafacil`.
-- **Banco**: projeto Supabase `neostore-site` (ref `cgaranykjfldeiruojct`),
-  isolado no schema `nestor`.
+- **Banco (desde 2026-10-02)**: schema `nestor` **dentro do projeto Supabase do LocadoraFácil**
+  (`iynpsgacgcbbtjllikku`), porque o bridge na VPS já acessa esse banco com `bridge_nestor`.
+  Tudo em um lugar só (decisão do Ricardo). O schema `nestor` antigo no `neostore-site`
+  (`cgaranykjfldeiruojct`) ficou **parado/obsoleto** — não gravar mais lá.
 
 ## ⚠️ Privacidade do banco (regra fixa)
-O schema `nestor` é o BANCO DO ASSISTENTE e **nunca** pode ser exposto ao público
-do site:
+O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
+- Fora do schema `public`: o Prisma/app do LocadoraFácil não gerencia nem enxerga.
 - Não adicionar `nestor` em Project Settings → API → Exposed schemas.
 - Sem GRANT/policy para `anon` ou `authenticated`.
-- Acesso só pelo usuário de banco `nestor_app` (conexão direta Postgres, no servidor).
-- Arquivos no bucket **privado** `nestor-arquivos`, sem policies.
+- Acesso só por `bridge_nestor` (bridge na VPS) e pelo conector Supabase (sessões na nuvem).
+- Arquivos no bucket **privado** `nestor-arquivos` (Storage do LocadoraFácil), sem policies.
+- Script: `supabase/locadorafacil/001_schema_nestor.sql` (pode rodar de novo, não apaga nada).
 
 ## Integração com o LocadoraFácil (sistema de locação da Neostore)
 O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco dele** (outro projeto
@@ -48,26 +51,30 @@ Regras firmes do Ricardo:
 
 ## Base de conhecimento técnica (GitBook importado)
 O GitBook https://neostore.gitbook.io/neostore foi importado em 2026-10-02 e **não será mais atualizado**.
-Está na memória do NESTOR: `nestor.memoria`, `criado_por = 'gitbook'`, códigos **#1 a #47**,
+Está em `nestor.memoria` no banco do LocadoraFácil, `criado_por = 'gitbook'`, códigos **#1 a #47**,
 visibilidade `equipe`. Cópia em texto: `conhecimento/gitbook-neostore.md`.
 
-Para responder dúvidas técnicas (pelo bridge ou aqui):
+Para responder dúvidas técnicas (bridge ou aqui), no projeto `iynpsgacgcbbtjllikku`:
 ```sql
--- projeto neostore-site (cgaranykjfldeiruojct)
 SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', NULL, false, NULL, 5);
 ```
 - Responder só com o que está nos itens; citar o #código; mandar os links de vídeo quando houver.
-- Se nada responder, dizer que não encontrou (não inventar).
-- Medidas de totens/púlpito (#30 Totem Branco, #31 Totem Preto, #32 Púlpito 40") foram lidas dos
-  desenhos no Figma; estão também em `dados` (jsonb).
+- Se nada responder, dizer que não encontrou. **Nunca** usar dados de um item para responder sobre outro.
+- Totens: #30 Totem Branco = item **0019**; #31 Totem Preto = item **0018**; #32 Púlpito 40".
+  As medidas também estão em `"Item".especificacoes` do 0018 e 0019 (preenchidas em 2026-10-02).
+- Informação nova (ex.: anexos do grupo "Informações"): gravar em `nestor.memoria`; se for de um
+  equipamento do cadastro, também em `"Item".especificacoes` (só acrescentar, nunca apagar o que existe).
 - Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
 
 ## Estrutura
 
 ```
 assistentetecico/
-├── supabase/migrations/
-│   └── 001_nestor_schema.sql   # Schema nestor (aplicado no neostore-site)
+├── supabase/
+│   ├── locadorafacil/
+│   │   └── 001_schema_nestor.sql  # Schema nestor ATUAL (banco do LocadoraFácil)
+│   └── migrations/
+│       └── 001_nestor_schema.sql  # Versão antiga (neostore-site) — obsoleta
 ├── agent/
 │   └── nestor_system_prompt.txt
 ├── integracoes/
