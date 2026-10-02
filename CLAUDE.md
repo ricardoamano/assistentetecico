@@ -14,8 +14,9 @@ Serve só para ele confirmar que a sessão está neste projeto — não é senha
 - **Sem N8N, sem Evolution API, sem Cloudfy** — serviços serão cancelados.
 - **WhatsApp = "bridge"** — sempre que o usuário falar em WhatsApp, refere-se ao
   bridge dele (detalhes a confirmar).
-- **Servidor**: VPS própria (a contratar).
-- **Portal web**: `nestor.neostore.app` (a construir).
+- **Servidor**: VPS Hostinger (ativa). **Portal web**: `nestor.neostore.app` = neostore-portal
+  (Express + PM2), recebe menções do WhatsApp e roda `claude -p` como usuário `neostore`
+  em `/root/projects/locadorafacil`.
 - **Banco**: projeto Supabase `neostore-site` (ref `cgaranykjfldeiruojct`),
   isolado no schema `nestor`.
 
@@ -29,8 +30,9 @@ do site:
 
 ## Integração com o LocadoraFácil (sistema de locação da Neostore)
 O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco dele** (outro projeto
-Supabase, id `iynpsgacgcbbtjllikku`) usando o conector Supabase já ligado na conta:
-`mcp__Supabase__execute_sql` com `project_id: iynpsgacgcbbtjllikku`. Sem API, sem senha, sem VPS. Regras, conexão e função
+Supabase, id `iynpsgacgcbbtjllikku`) com o usuário Postgres `bridge_nestor` pelo pooler `aws-1-sa-east-1`
+(porta 5432, senha no vault da VPS). Sem API. Sessões Claude Code na nuvem usam o conector Supabase
+(`mcp__Supabase__execute_sql`, mesmo project_id). Regras, conexão e função
 de cadastro de itens em `integracoes/locadorafacil.md`. Não confundir com o banco do próprio NESTOR.
 
 Regras firmes do Ricardo:
