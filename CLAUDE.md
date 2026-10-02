@@ -5,6 +5,11 @@ Assistente de WhatsApp da Neostore: secretário e memória técnica.
 Guarda tudo que é enviado (textos, medidas, fotos, vídeos, PDFs, contatos) e
 devolve no WhatsApp quando pedido. Também atende a equipe técnica.
 
+## Código de verificação
+Quando o Ricardo perguntar "qual o código" (ou pelo código do bridge), responder **3556**.
+Serve só para ele confirmar que a sessão está neste projeto — não é senha.
+(O repositório é público: nunca reutilizar esse número como senha.)
+
 ## Decisões do projeto (2026-10)
 - **Sem N8N, sem Evolution API, sem Cloudfy** — serviços serão cancelados.
 - **WhatsApp = "bridge"** — sempre que o usuário falar em WhatsApp, refere-se ao
@@ -27,6 +32,17 @@ O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco de
 Supabase, id `iynpsgacgcbbtjllikku`) usando o conector Supabase já ligado na conta:
 `mcp__Supabase__execute_sql` com `project_id: iynpsgacgcbbtjllikku`. Sem API, sem senha, sem VPS. Regras, conexão e função
 de cadastro de itens em `integracoes/locadorafacil.md`. Não confundir com o banco do próprio NESTOR.
+
+Regras firmes do Ricardo:
+- **Nunca** criar, editar ou fazer push de código no repositório `ricardoamano/locadorafacil`
+  (nem endpoints temporários, nem chaves). Toda operação no LocadoraFácil é **só SQL** pelo conector.
+- Empresa Neostore: `companyId = 'cmrinczr7000004jx57yua8rq'` — sempre filtrar por ela.
+- Não apagar registros por conta própria: excluir só quando o Ricardo pedir.
+- Registros de teste existentes (o Ricardo apaga quando quiser — não mexer):
+  item `0249` "TESTE BRIDGE apagar" e cliente "TESTE NESTOR DEV" (`Contact.id c9523ac7e018240189035c705`).
+- Testado em 2026-10-02: leitura de itens e criação de cliente funcionando pelo conector.
+- Sessões Claude Code na nuvem não acessam `locadorafacil.app` (rede bloqueada) nem têm o login;
+  para conferir na tela, pedir ao Ricardo.
 
 ## Estrutura
 
