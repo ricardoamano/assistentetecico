@@ -22,6 +22,11 @@ do site:
 - Acesso só pelo usuário de banco `nestor_app` (conexão direta Postgres, no servidor).
 - Arquivos no bucket **privado** `nestor-arquivos`, sem policies.
 
+## Integração com o LocadoraFácil (sistema de locação da Neostore)
+O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco dele** (outro projeto
+Supabase, usuário `bridge_nestor`, env `LOCADORA_DATABASE_URL`). Sem API. Regras, conexão e função
+de cadastro de itens em `integracoes/locadorafacil.md`. Não confundir com o banco do próprio NESTOR.
+
 ## Estrutura
 
 ```
@@ -30,6 +35,8 @@ assistentetecico/
 │   └── 001_nestor_schema.sql   # Schema nestor (aplicado no neostore-site)
 ├── agent/
 │   └── nestor_system_prompt.txt
+├── integracoes/
+│   └── locadorafacil.md        # Como o NESTOR grava no banco do LocadoraFácil
 ├── legacy/                     # Versão N8N/Evolution (referência, não usar)
 └── CLAUDE.md
 ```
