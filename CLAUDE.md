@@ -46,6 +46,22 @@ Regras firmes do Ricardo:
 - Sessões Claude Code na nuvem não acessam `locadorafacil.app` (rede bloqueada) nem têm o login;
   para conferir na tela, pedir ao Ricardo.
 
+## Base de conhecimento técnica (GitBook importado)
+O GitBook https://neostore.gitbook.io/neostore foi importado em 2026-10-02 e **não será mais atualizado**.
+Está na memória do NESTOR: `nestor.memoria`, `criado_por = 'gitbook'`, códigos **#1 a #47**,
+visibilidade `equipe`. Cópia em texto: `conhecimento/gitbook-neostore.md`.
+
+Para responder dúvidas técnicas (pelo bridge ou aqui):
+```sql
+-- projeto neostore-site (cgaranykjfldeiruojct)
+SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', NULL, false, NULL, 5);
+```
+- Responder só com o que está nos itens; citar o #código; mandar os links de vídeo quando houver.
+- Se nada responder, dizer que não encontrou (não inventar).
+- Medidas de totens/púlpito (#30 Totem Branco, #31 Totem Preto, #32 Púlpito 40") foram lidas dos
+  desenhos no Figma; estão também em `dados` (jsonb).
+- Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
+
 ## Estrutura
 
 ```
@@ -56,6 +72,8 @@ assistentetecico/
 │   └── nestor_system_prompt.txt
 ├── integracoes/
 │   └── locadorafacil.md        # Como o NESTOR grava no banco do LocadoraFácil
+├── conhecimento/
+│   └── gitbook-neostore.md     # Cópia da base de conhecimento do GitBook (#1–#47)
 ├── legacy/                     # Versão N8N/Evolution (referência, não usar)
 └── CLAUDE.md
 ```
