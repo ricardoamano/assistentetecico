@@ -24,7 +24,8 @@ do site:
 
 ## Integração com o LocadoraFácil (sistema de locação da Neostore)
 O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco dele** (outro projeto
-Supabase, usuário `bridge_nestor`, env `LOCADORA_DATABASE_URL`). Sem API. Regras, conexão e função
+Supabase, id `iynpsgacgcbbtjllikku`) usando o conector Supabase já ligado na conta:
+`mcp__Supabase__execute_sql` com `project_id: iynpsgacgcbbtjllikku`. Sem API, sem senha, sem VPS. Regras, conexão e função
 de cadastro de itens em `integracoes/locadorafacil.md`. Não confundir com o banco do próprio NESTOR.
 
 ## Estrutura

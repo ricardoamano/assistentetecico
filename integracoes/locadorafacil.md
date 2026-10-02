@@ -2,7 +2,8 @@
 
 O NESTOR administra o **LocadoraFácil** (sistema de locação da Neostore, `locadorafacil.app`,
 repo `ricardoamano/locadorafacil`) gravando **direto no Postgres** dele. Não existe API, chave
-ou webhook para isso — e não deve ser criada. Tudo é SQL com o usuário `bridge_nestor`.
+ou webhook para isso — e não deve ser criada. Tudo é SQL, executado pelo conector Supabase da conta
+(ferramenta `mcp__Supabase__execute_sql`, projeto `iynpsgacgcbbtjllikku`).
 
 ## Dois bancos, não confundir
 | Banco | Projeto Supabase | Para que serve | Usuário |
@@ -10,7 +11,25 @@ ou webhook para isso — e não deve ser criada. Tudo é SQL com o usuário `bri
 | **NESTOR** (schema `nestor`) | `neostore-site` (`cgaranykjfldeiruojct`) | memória, usuários, histórico do assistente | `nestor_app` |
 | **LocadoraFácil** (schema `public`) | `locadorafacil` (`iynpsgacgcbbtjllikku`) | itens, clientes, orçamentos, OS, faturas, equipe… | `bridge_nestor` |
 
-## Conexão (servidor do NESTOR, na VPS)
+## Como acessar — CAMINHO PRINCIPAL (funciona hoje, sem senha)
+O NESTOR roda como sessão Claude Code na conta do Ricardo, que tem o **conector Supabase** ligado.
+Esse conector alcança os dois projetos. Para gravar/ler no LocadoraFácil basta chamar a ferramenta
+`mcp__Supabase__execute_sql` com:
+```
+project_id: iynpsgacgcbbtjllikku
+query:      <SQL abaixo>
+```
+Não precisa de `LOCADORA_DATABASE_URL`, senha, VPS nem porta 5432 liberada. Se a ferramenta não
+aparecer na lista, carregue com `ToolSearch` (`select:mcp__Supabase__execute_sql`).
+Teste rápido:
+```sql
+SELECT codigo, nome, quantidade FROM "Item"
+WHERE "companyId"='cmrinczr7000004jx57yua8rq' ORDER BY codigo DESC LIMIT 5;
+```
+Observação: pelo conector, `DELETE` às vezes pede aprovação ou demora; prefira `UPDATE` (ex.: `ativo=false`)
+e deixe a exclusão física para quando o Ricardo aprovar.
+
+## Caminho alternativo (só quando houver servidor próprio do NESTOR)
 Variável de ambiente `LOCADORA_DATABASE_URL`:
 ```
 postgresql://bridge_nestor.iynpsgacgcbbtjllikku:<SENHA>@aws-0-sa-east-1.pooler.supabase.com:5432/postgres?sslmode=require
@@ -18,9 +37,8 @@ postgresql://bridge_nestor.iynpsgacgcbbtjllikku:<SENHA>@aws-0-sa-east-1.pooler.s
 - Usar o **pooler** (tem IPv4). O host direto `db.<ref>.supabase.co` é só IPv6 — não usar.
 - O usuário leva o sufixo do projeto (`bridge_nestor.iynpsgacgcbbtjllikku`); sem ele o pooler recusa.
 - Se der "Tenant or user not found", trocar `aws-0` por `aws-1`.
-- Senha: está com o Ricardo (não fica em repositório). Trocar: `ALTER ROLE bridge_nestor WITH PASSWORD '...'`
-  no SQL Editor do projeto locadorafacil.
-- Teste: `SELECT codigo, nome, quantidade FROM "Item" WHERE "companyId"='cmrinczr7000004jx57yua8rq' ORDER BY codigo DESC LIMIT 5;`
+- Senha: está com o Ricardo (não fica em repositório). Trocar: `ALTER ROLE bridge_nestor WITH PASSWORD '...'`.
+- Sessões Claude Code na nuvem NÃO alcançam a porta 5432 (rede bloqueada) — por isso o caminho principal é o conector.
 
 ## O que `bridge_nestor` pode
 SELECT / INSERT / UPDATE / DELETE em todas as tabelas de dados (`Item`, `Contact`, `SubContact`, `Local`,
