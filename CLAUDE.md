@@ -65,6 +65,11 @@ SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', 
   As medidas também estão em `"Item".especificacoes` do 0018 e 0019 (preenchidas em 2026-10-02).
 - Informação nova (ex.: anexos do grupo "Informações"): gravar em `nestor.memoria`; se for de um
   equipamento do cadastro, também em `"Item".especificacoes` (só acrescentar, nunca apagar o que existe).
+- **Fonte única = banco** (decisão do Ricardo, 2026-10-03). A pasta do bridge na VPS
+  `/opt/neostore/equipamentos/` misturava dados (ex.: totem branco com medidas do preto) e está
+  sendo importada para `nestor.memoria` (`criado_por = 'vps-equipamentos'`); depois vira só arquivo
+  morto (`equipamentos_ARQUIVO`, não apagar). Arquivos de imagem/PDF ficam na VPS por enquanto,
+  com o caminho em `arquivo_path` prefixado `vps:` (o bridge não tem chave do Storage).
 - Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
 
 ## Estrutura
