@@ -23,6 +23,12 @@ Serve só para ele confirmar que a sessão está neste projeto — não é senha
   Tudo em um lugar só (decisão do Ricardo). O schema `nestor` antigo no `neostore-site`
   (`cgaranykjfldeiruojct`) ficou **parado/obsoleto** — não gravar mais lá.
 
+## Agendamento de mensagens nos grupos (2026-10-03)
+Banco pronto: `nestor.agendamentos`, `nestor.envios`, `nestor.agendamentos_pendentes()` e
+`nestor.agenda_do_dia(data)` (eventos aprovados + tarefas abertas). Agendamento id 1 = agenda do dia
+no grupo **Secretário**, 07:30, seg–sáb. O envio e a tela ficam no portal (VPS, feito pelo grupo DEV).
+Especificação: `integracoes/agendamentos-portal.md`. Script: `supabase/locadorafacil/002_agendamentos.sql`.
+
 ## ⚠️ Privacidade do banco (regra fixa)
 O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
 - Fora do schema `public`: o Prisma/app do LocadoraFácil não gerencia nem enxerga.
