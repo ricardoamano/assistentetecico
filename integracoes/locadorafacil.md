@@ -109,3 +109,16 @@ Regras: responder só com o que achar e citar o #código; não usar dados de um 
 (ex.: Totem Branco #30 = item 0019 ≠ Totem Preto #31 = item 0018). Se a informação é de um
 equipamento do cadastro, acrescentar também em `"Item".especificacoes` (sem apagar o que já existe).
 Arquivos: bucket privado `nestor-arquivos` no Storage deste projeto.
+
+## Tarefas de IA que o NESTOR assumiu (03/10/2026)
+O LocadoraFácil desligou a IA por API externa (créditos pagos). Quando o Ricardo pedir pelo WhatsApp, o NESTOR faz
+com o Claude do plano e grava no banco:
+- **Preencher cadastro** de cliente/fornecedor/local/item a partir do nome (razão social, CNPJ, endereço, categoria,
+  descrição comercial, watts/kVA de equipamentos…). Itens: usar `bridge_cadastrar_item`.
+- **Proposta comercial** (Projeto Especial) em Markdown — estrutura e regras em `src/lib/ia.ts` do repo
+  locadorafacil (`INSTRUCOES_PROPOSTA_PADRAO`); salvar em `"Orcamento".propostaTexto` quando pedido.
+- **Escala de equipe** sugerida para uma OS (`INSTRUCOES_ESCALA_PADRAO`); técnicos pelo **apelido** (`"Membro".apelido`,
+  ex.: "Well" = Wellington Santos Nunes).
+- **Contrato** por IA (`INSTRUCOES_CONTRATO_PADRAO`, modelos em `"ModeloContrato"`).
+- **Preços de mercado** (estimativa de locação por item), **resumo de eventos** do período, **ajuda** sobre o sistema,
+  **importar OS de postos de serviço** e **importar lista de itens** (planilha/texto → `bridge_cadastrar_item`).
