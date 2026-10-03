@@ -40,7 +40,11 @@ Só ações fixas, cabeçalho `x-ops-token` = variável de ambiente `NESTOR_OPS_
 (token gerado na VPS em `/opt/neostore/segredos/nestor-ops.token`; nunca no chat).
 - `curl -s -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/status`
 - `curl -s -X POST -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/destravar`
-  (encerra `claude -p` presos e reinicia o portal; 1x por minuto). Instalação: `ops/instalar.sh`.
+  (encerra `claude -p` presos e reinicia o portal; 1x por minuto; `?app=<nome>` escolhe o processo).
+- Só leitura, para revisão: `GET /ops/config`, `/ops/logs?app=&linhas=`, `/ops/instrucoes` (CLAUDE.md dos
+  projetos, segredos mascarados) e `/ops/codigo?app=` (.tar.gz sem node_modules/.git/.env/sessões/chaves/mídias).
+  Código baixado fica só no scratchpad desta sessão — nunca commitar.
+Instalação/atualização: rodar de novo `ops/instalar.sh` na VPS (mantém o token).
 Requer `nestor.neostore.app` liberado na rede do ambiente. **Funcionando desde 2026-10-03.**
 Processos PM2 na VPS: `whatsapp-bridge` (o que o destravar reinicia), `neostore-portal`,
 `neostore-whatsapp-agent`, `neostore-site`, `locadora-erp`, `hotel-signage`, `nestor-ops`.
