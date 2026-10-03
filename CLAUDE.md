@@ -34,6 +34,15 @@ Especificação: `integracoes/agendamentos-portal.md`. Script: `supabase/locador
 "Grupos" do portal. Inicial: Secretário e Informações = registro (só o Ricardo grava), APOIO NEOSTORE =
 consulta, DEV = dev.
 
+## Destravar o bridge daqui (nestor-ops)
+Serviço `ops/nestor-ops.js` na VPS (PM2 `nestor-ops`, 127.0.0.1:3099, nginx em `https://nestor.neostore.app/ops/`).
+Só ações fixas, cabeçalho `x-ops-token` = variável de ambiente `NESTOR_OPS_TOKEN` desta nuvem
+(token gerado na VPS em `/opt/neostore/segredos/nestor-ops.token`; nunca no chat).
+- `curl -s -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/status`
+- `curl -s -X POST -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/destravar`
+  (encerra `claude -p` presos e reinicia o portal; 1x por minuto). Instalação: `ops/instalar.sh`.
+Requer `nestor.neostore.app` liberado na rede do ambiente.
+
 ## ⚠️ Privacidade do banco (regra fixa)
 O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
 - Fora do schema `public`: o Prisma/app do LocadoraFácil não gerencia nem enxerga.
