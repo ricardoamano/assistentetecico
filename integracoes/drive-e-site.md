@@ -3,8 +3,8 @@
 Decisão do Ricardo (2026-10-03). Grupo principal: **Secretário**.
 
 ## Acesso ao Drive
-- Conta de serviço no projeto Google Cloud **"Site Neostore"** (nº 189463828553), Drive API já ativa.
-  E-mail da conta de serviço: _(pendente — Ricardo vai criar)_.
+- Conta de serviço: `neostore-calendar@claude-nestor-neostoresi.iam.gserviceaccount.com`
+  (projeto Google Cloud `claude-nestor-neostoresi`). Conferir se a Drive API está ativa nesse projeto.
 - Chave JSON só na VPS: `/opt/neostore/segredos/google-drive.json` (chmod 600, usuário neostore).
   Nunca no chat, no WhatsApp ou em repositório.
 - Escopo `drive.readonly`. O bridge só enxerga pastas compartilhadas com a conta de serviço (Leitor).

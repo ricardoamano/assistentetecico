@@ -88,7 +88,8 @@ SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', 
   público (pasta precisa estar "qualquer pessoa com o link"). Pasta **Totvs_fotos** (portfólio para
   site e vendas, 9 fotos) = **#48 a #56**, descrição pendente (fotos > 10 MB).
   Plano: conta de serviço Google (somente leitura, só pastas compartilhadas com ela) no projeto
-  Google Cloud "Site Neostore" (nº 189463828553), chave em `/opt/neostore/segredos/google-drive.json`
+  Google Cloud `claude-nestor-neostoresi`, e-mail
+  `neostore-calendar@claude-nestor-neostoresi.iam.gserviceaccount.com`, chave em `/opt/neostore/segredos/google-drive.json`
   na VPS. Grupo principal para links do Drive: **Secretário**. Padrão: só catalogar; o Ricardo sobe o
   portfólio no site ele mesmo. Só quando ele pedir, mídias para o site vão por
   `POST /api/import` (contrato em `neostore-website/docs/NESTOR-INTEGRACAO.md`). Fluxo completo:
