@@ -41,7 +41,10 @@ Só ações fixas, cabeçalho `x-ops-token` = variável de ambiente `NESTOR_OPS_
 - `curl -s -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/status`
 - `curl -s -X POST -H "x-ops-token: $NESTOR_OPS_TOKEN" https://nestor.neostore.app/ops/destravar`
   (encerra `claude -p` presos e reinicia o portal; 1x por minuto). Instalação: `ops/instalar.sh`.
-Requer `nestor.neostore.app` liberado na rede do ambiente.
+Requer `nestor.neostore.app` liberado na rede do ambiente. **Funcionando desde 2026-10-03.**
+Processos PM2 na VPS: `whatsapp-bridge` (o que o destravar reinicia), `neostore-portal`,
+`neostore-whatsapp-agent`, `neostore-site`, `locadora-erp`, `hotel-signage`, `nestor-ops`.
+Há também uma sessão `claude --remote-control vps-neostore` em tmux na VPS.
 
 ## ⚠️ Privacidade do banco (regra fixa)
 O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
