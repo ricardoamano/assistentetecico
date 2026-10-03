@@ -12,7 +12,8 @@ Decisão do Ricardo (2026-10-03). Grupo principal: **Secretário**.
 ## Fluxo quando chega um link de pasta do Drive
 1. Ler a pasta pela conta de serviço. Se 403/404: pedir para compartilhar com o e-mail da conta de serviço.
 2. Baixar fotos e vídeos.
-3. Destino (perguntar ou deduzir da mensagem):
+3. Padrão: **só catalogar** (passo 5). O Ricardo sobe o portfólio no site ele mesmo (2026-10-03);
+   enviar ao site **apenas quando ele pedir explicitamente**. Destinos possíveis nesse caso:
    - **Portfólio** do site → `POST /api/import` com `target=project` (entra como **rascunho**).
    - **"O que fazemos"** → `target=service` + `serviceSlug`.
    - **Só referência interna** (desenho técnico, foto de equipamento) → não vai ao site.

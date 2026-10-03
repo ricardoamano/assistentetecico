@@ -84,7 +84,8 @@ SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', 
   site e vendas, 9 fotos) = **#48 a #56**, descrição pendente (fotos > 10 MB).
   Plano: conta de serviço Google (somente leitura, só pastas compartilhadas com ela) no projeto
   Google Cloud "Site Neostore" (nº 189463828553), chave em `/opt/neostore/segredos/google-drive.json`
-  na VPS. Grupo principal para links do Drive: **Secretário**. Mídias para o site vão por
+  na VPS. Grupo principal para links do Drive: **Secretário**. Padrão: só catalogar; o Ricardo sobe o
+  portfólio no site ele mesmo. Só quando ele pedir, mídias para o site vão por
   `POST /api/import` (contrato em `neostore-website/docs/NESTOR-INTEGRACAO.md`). Fluxo completo:
   `integracoes/drive-e-site.md`.
 - Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
