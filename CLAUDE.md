@@ -76,6 +76,12 @@ SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', 
   sendo importada para `nestor.memoria` (`criado_por = 'vps-equipamentos'`); depois vira só arquivo
   morto (`equipamentos_ARQUIVO`, não apagar). Arquivos de imagem/PDF ficam na VPS por enquanto,
   com o caminho em `arquivo_path` prefixado `vps:` (o bridge não tem chave do Storage).
+- **Arquivos do Google Drive** (2026-10-03): conector Drive ligado na conta ricardoamano@gmail.com
+  (neostoresi@gmail.com não; pedir para compartilhar com ricardoamano). Limite do conector: 10 MB por
+  arquivo; a nuvem não acessa drive.google.com direto. Catálogo em `nestor.memoria` com
+  `arquivo_path = 'drive:<id>'`, `criado_por = 'drive-catalogo'`; o bridge envia baixando pelo link
+  público (pasta precisa estar "qualquer pessoa com o link"). Pasta **Totvs_fotos** (portfólio para
+  site e vendas, 9 fotos) = **#48 a #56**, descrição pendente (fotos > 10 MB).
 - Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
 
 ## Estrutura
