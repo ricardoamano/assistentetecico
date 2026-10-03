@@ -16,7 +16,8 @@ Serve só para ele confirmar que a sessão está neste projeto — não é senha
   bridge dele (detalhes a confirmar).
 - **Servidor**: VPS Hostinger (ativa). **Portal web**: `nestor.neostore.app` = neostore-portal
   (Express + PM2), recebe menções do WhatsApp e roda `claude -p` como usuário `neostore`
-  em `/root/projects/locadorafacil`.
+  em `/root/projects/locadorafacil`. **Só responde a menções (@Nestor) em grupos** — não
+  responde em conversa individual. Instruções ao bridge: mandar no grupo com @menção.
 - **Banco (desde 2026-10-02)**: schema `nestor` **dentro do projeto Supabase do LocadoraFácil**
   (`iynpsgacgcbbtjllikku`), porque o bridge na VPS já acessa esse banco com `bridge_nestor`.
   Tudo em um lugar só (decisão do Ricardo). O schema `nestor` antigo no `neostore-site`
