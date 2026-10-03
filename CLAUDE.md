@@ -82,6 +82,8 @@ SELECT codigo, titulo, conteudo, dados FROM nestor.buscar_memoria('<pergunta>', 
   `arquivo_path = 'drive:<id>'`, `criado_por = 'drive-catalogo'`; o bridge envia baixando pelo link
   público (pasta precisa estar "qualquer pessoa com o link"). Pasta **Totvs_fotos** (portfólio para
   site e vendas, 9 fotos) = **#48 a #56**, descrição pendente (fotos > 10 MB).
+  Plano: conta de serviço Google (somente leitura, só pastas compartilhadas com ela), chave em
+  `/opt/neostore/segredos/google-drive.json` na VPS. Grupo principal para links do Drive: **Secretário**.
 - Embeddings ainda vazios (sem chave OpenAI): a busca usa texto + similaridade de título.
 
 ## Estrutura
