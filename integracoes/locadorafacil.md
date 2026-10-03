@@ -109,3 +109,61 @@ Regras: responder só com o que achar e citar o #código; não usar dados de um 
 (ex.: Totem Branco #30 = item 0019 ≠ Totem Preto #31 = item 0018). Se a informação é de um
 equipamento do cadastro, acrescentar também em `"Item".especificacoes` (sem apagar o que já existe).
 Arquivos: bucket privado `nestor-arquivos` no Storage deste projeto.
+
+## Tarefas de IA que o NESTOR assumiu (03/10/2026)
+O LocadoraFácil desligou a IA por API externa (créditos pagos). Quando o Ricardo pedir pelo WhatsApp, o NESTOR faz
+com o Claude do plano e grava no banco:
+- **Preencher cadastro** de cliente/fornecedor/local/item a partir do nome (razão social, CNPJ, endereço, categoria,
+  descrição comercial, watts/kVA de equipamentos…). Itens: usar `bridge_cadastrar_item`.
+- **Proposta comercial** (Projeto Especial) em Markdown — estrutura e regras em `src/lib/ia.ts` do repo
+  locadorafacil (`INSTRUCOES_PROPOSTA_PADRAO`); salvar em `"Orcamento".propostaTexto` quando pedido.
+- **Escala de equipe** sugerida para uma OS (`INSTRUCOES_ESCALA_PADRAO`); técnicos pelo **apelido** (`"Membro".apelido`,
+  ex.: "Well" = Wellington Santos Nunes).
+- **Contrato** por IA (`INSTRUCOES_CONTRATO_PADRAO`, modelos em `"ModeloContrato"`).
+- **Preços de mercado** (estimativa de locação por item), **resumo de eventos** do período, **ajuda** sobre o sistema,
+  **importar OS de postos de serviço** e **importar lista de itens** (planilha/texto → `bridge_cadastrar_item`).
+
+## Orçamento rápido pelo NESTOR (substitui o botão "Rápido" do app, removido em 03/10/2026)
+Fluxo: o Ricardo manda o briefing no WhatsApp → o NESTOR consulta o catálogo, propõe itens/valores em texto
+(pronto para encaminhar ao cliente) e, quando o Ricardo confirmar, **formaliza** com uma única chamada:
+```sql
+SELECT bridge_criar_orcamento(
+  'cmrinczr7000004jx57yua8rq',       -- empresa
+  'Stone',                           -- cliente (acha por nome; cria se não existir)
+  'Convenção Stone 2026',            -- nome do evento
+  '2026-11-10', '2026-11-12',        -- início, fim
+  '[{"codigo":"0012","quantidade":2,"diarias":3},
+    {"codigo":"0045","quantidade":10,"diarias":3,"valorUnitario":40}]'::jsonb,  -- valorUnitario opcional
+  '2026-11-09',                      -- montagem (opcional)
+  'Observações para o cliente',      -- opcional
+  'Fabio Zonta', '11 99999-0000',    -- pessoa de contato (opcional)
+  'Plenária'                         -- nome da sala (opcional, padrão "Geral")
+);
+-- → {"acao":"criado","numero":1880,"total":5400,"itens":2,"avisos":[],"link":"https://locadorafacil.app/orcamentos/<id>"}
+```
+- Preço sem `valorUnitario`: política do item — ≥30 diárias usa `valorMes`, ≥15 `valorQuinzena`, ≥7 `valorSemana`,
+  senão `valorAluguel` (diária). Serviços usam `valorAluguel`.
+- Códigos de item: 4 dígitos (`0012`); item inexistente vira aviso, não erro. Sempre responder ao Ricardo com o
+  número e o link.
+- Catálogo para montar a proposta:
+  `SELECT codigo, nome, modelo, apelidos, "valorAluguel", "valorSemana", "valorQuinzena", "valorMes", quantidade
+   FROM "Item" WHERE "companyId"='cmrinczr7000004jx57yua8rq' AND ativo ORDER BY nome;`
+- Para mudar depois: `UPDATE "SalaItem" …`, `UPDATE "Orcamento" SET total = (SELECT sum(subtotal) FROM "SalaItem" si
+  JOIN "Sala" s ON s.id = si."salaId" WHERE s."orcamentoId" = '<id>') WHERE id = '<id>';`
+
+## Frases que o app mostra ao usuário (ele vai mandar exatamente assim)
+Os botões de IA do LocadoraFácil agora exibem uma frase pronta + "Copiar". Espere pedidos neste formato:
+- "Nestor, cadastre no LocadoraFácil o cliente <empresa> (CNPJ, endereço, contato)."
+- "Nestor, cadastre o item <nome, marca, modelo>, <qtd> unidades, diária R$ <valor>." → `bridge_cadastrar_item`
+- "Nestor, quanto o mercado cobra pela locação de <equipamento>? Diária, semana e reposição."
+- "Nestor, monte a proposta do projeto especial: <descrição>. Salve no orçamento #<n>." → `UPDATE "Orcamento"
+  SET "projetoEspecial"=true, "conteudoProjeto"='<markdown>' WHERE numero=<n> AND "companyId"=…`
+- "Nestor, sugira a escala e o veículo para a OS #<n>." → ler `"OrdemServico"`, `"Membro"` (apelido!), `"Veiculo"`.
+- "Nestor, redija o contrato do orçamento #<n> e salve em Contratos." → inserir em `"Contrato"` (ver colunas no schema).
+- "Nestor, analise os indicadores de <período>…" / "resuma os eventos de <período>…" → consultas em `"Orcamento"`,
+  `"OrdemServico"`, `"Fatura"`, `"Transacao"`.
+- "Nestor, quem tem <equipamento> para alugar e quanto custa?" → `"PrecoMercado"` + `"Item"`.
+- "Nestor, segue a OS do posto <cliente>…" → `bridge_criar_orcamento` (cliente é posto de serviço).
+- "Nestor, cadastre esta lista de itens…" → `bridge_cadastrar_item` por linha.
+- "Nestor, anote no banco de preços: <empresa> cobra R$ <valor>…" → `INSERT INTO "PrecoMercado"` (ver colunas).
+- "Nestor, orçamento para <cliente>, evento <nome>, de <data> a <data>: <itens>." → `bridge_criar_orcamento`.
