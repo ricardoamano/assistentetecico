@@ -58,6 +58,9 @@ O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
 - Acesso só por `bridge_nestor` (bridge na VPS) e pelo conector Supabase (sessões na nuvem).
 - Arquivos no bucket **privado** `nestor-arquivos` (Storage do LocadoraFácil), sem policies.
 - Script: `supabase/locadorafacil/001_schema_nestor.sql` (pode rodar de novo, não apaga nada).
+- Papéis do bridge: `bridge_nestor` (escrita), `bridge_nestor_ro` (leitura geral), `bridge_nestor_apoio`
+  (grupo de apoio: leitura técnica, Item sem preços). Os dois de leitura enxergam `nestor.memoria`
+  desde 2026-10-03 (`004_seguranca_e_acessos.sql`). `anon`/`authenticated` sem acesso a nada no public.
 
 ## Integração com o LocadoraFácil (sistema de locação da Neostore)
 O NESTOR cria/edita/exclui qualquer coisa no LocadoraFácil **direto no banco dele** (outro projeto
