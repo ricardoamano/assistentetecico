@@ -25,7 +25,7 @@ pm2 delete nestor-ops >/dev/null 2>&1 || true
 pm2 start "$DIR/ecosystem.config.js" && pm2 save
 
 # nginx: publica em https://nestor.neostore.app/ops/
-CONF=$(grep -rl "nestor.neostore.app" /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | head -1 || true)
+CONF=$(grep -Rl "nestor.neostore.app" /etc/nginx/sites-available /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null | head -1 || true)
 if [ -n "$CONF" ] && ! grep -q "location /ops/" "$CONF"; then
   cp "$CONF" "$CONF.bak-ops"
   # insere antes do primeiro "location" do bloco que tem ssl (porta 443)
