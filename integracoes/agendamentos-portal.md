@@ -67,3 +67,30 @@ Regras: sem eventos → "Nenhum evento hoje". Atrasadas: listar no máximo 10 e 
 
 - Mandar informações a outros grupos (tipo `texto` ou `prompt` já cobre).
 - Avisos por evento (ex.: "amanhã montagem do #1849") — novo tipo, quando o Ricardo pedir.
+
+---
+
+# Modo de cada grupo (tela "Grupos" no portal)
+
+Banco pronto (2026-10-03, `supabase/locadorafacil/003_grupos.sql`): tabela `nestor.grupos` e função
+`nestor.modo_grupo(nome, jid)`.
+
+| Modo | O bot faz |
+|---|---|
+| `consulta` | Só responde perguntas. Não grava, não altera nada. **Padrão para grupo não cadastrado.** |
+| `registro` | Responde e grava (nestor.memoria, cadastros no LocadoraFácil). Com `so_admin_grava = true`, só o Ricardo pode mandar gravar. |
+| `dev` | Pode alterar arquivos/código do portal na VPS. |
+| `desligado` | Ignora o grupo. |
+
+Configuração inicial: Secretário = registro · Informações = registro · APOIO NEOSTORE = consulta · DEV = dev.
+
+## O que o portal precisa fazer
+1. Antes de passar a mensagem ao `claude -p`, consultar `SELECT * FROM nestor.modo_grupo(NULL, '<jid>');`
+   (ou pelo nome, na primeira vez, e gravar o `grupo_jid`) e **incluir o modo no prompt** como regra:
+   "Este grupo está em modo CONSULTA: não grave nem altere nada", etc.
+   - Em `consulta`, além do prompt, rodar o Claude sem permissão de escrita (ferramentas de edição
+     desligadas) — a regra não pode depender só do texto.
+   - Em `desligado`, não chamar o Claude.
+2. Tela **"Grupos"**: lista dos grupos em que o bot está, com um seletor de modo por grupo
+   (Consulta / Registro / DEV / Desligado), a chave "só o Ricardo grava" e uma observação.
+   Mudança vale na hora (sem reiniciar o PM2). Grupo novo aparece automaticamente como Consulta.

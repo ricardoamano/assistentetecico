@@ -29,6 +29,11 @@ Banco pronto: `nestor.agendamentos`, `nestor.envios`, `nestor.agendamentos_pende
 no grupo **Secretário**, 07:30, seg–sáb. O envio e a tela ficam no portal (VPS, feito pelo grupo DEV).
 Especificação: `integracoes/agendamentos-portal.md`. Script: `supabase/locadorafacil/002_agendamentos.sql`.
 
+**Modo de cada grupo** (`nestor.grupos`, `nestor.modo_grupo(nome, jid)`, script `003_grupos.sql`):
+`consulta` (padrão para grupo não cadastrado) / `registro` / `dev` / `desligado`, configurável na tela
+"Grupos" do portal. Inicial: Secretário e Informações = registro (só o Ricardo grava), APOIO NEOSTORE =
+consulta, DEV = dev.
+
 ## ⚠️ Privacidade do banco (regra fixa)
 O schema `nestor` é o BANCO DO ASSISTENTE e fica separado do sistema:
 - Fora do schema `public`: o Prisma/app do LocadoraFácil não gerencia nem enxerga.
