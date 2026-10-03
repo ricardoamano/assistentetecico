@@ -29,10 +29,12 @@ Banco pronto: `nestor.agendamentos`, `nestor.envios`, `nestor.agendamentos_pende
 no grupo **Secretário**, 07:30, seg–sáb. O envio e a tela ficam no portal (VPS, feito pelo grupo DEV).
 Especificação: `integracoes/agendamentos-portal.md`. Script: `supabase/locadorafacil/002_agendamentos.sql`.
 
-**Modo de cada grupo** (`nestor.grupos`, `nestor.modo_grupo(nome, jid)`, script `003_grupos.sql`):
-`consulta` (padrão para grupo não cadastrado) / `registro` / `dev` / `desligado`, configurável na tela
-"Grupos" do portal. Inicial: Secretário e Informações = registro (só o Ricardo grava), APOIO NEOSTORE =
-consulta, DEV = dev.
+**Modo de cada grupo**: já existe no portal (`/opt/neostore-portal/data/groups.json`, tela do portal: modo
+DEV/Informativo, sem financeiro, biblioteca, secretário). A tabela `nestor.grupos` criada aqui ficou **obsoleta**
+(duplicava o portal) — não usar.
+
+**Revisão geral 2026-10-03**: `ops/revisao/RELATORIO.md` (problemas e correções), `ops/revisao/aplicar.sh`
+(aplica no portal com backup/rollback), `bin/memoria.js` = ferramenta do bot para a base (`buscar`, `item`, `guardar`).
 
 ## Destravar o bridge daqui (nestor-ops)
 Serviço `ops/nestor-ops.js` na VPS (PM2 `nestor-ops`, 127.0.0.1:3099, nginx em `https://nestor.neostore.app/ops/`).

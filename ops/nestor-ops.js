@@ -121,7 +121,8 @@ async function instrucoes() {
 const EXCLUIR = ['node_modules', '.git', '.next', 'dist', 'build', '.cache', '.wwebjs_auth', '.wwebjs_cache', 'auth_info*',
   'session*', 'sessions', 'baileys*', 'uploads', 'media', 'midia*', 'tmp', 'logs', 'segredos', 'backups'];
 const EXCLUIR_ARQ = ['.env*', '*.pem', '*.key', '*.p12', '*.crt', '*.sqlite*', '*.db', '*.log', '*.zip', '*.tar*', '*.gz',
-  '*.jpg', '*.jpeg', '*.png', '*.webp', '*.gif', '*.mp4', '*.mov', '*.mp3', '*.ogg', '*.pdf', '*credentials*', '*service-account*'];
+  '*.jpg', '*.jpeg', '*.png', '*.webp', '*.gif', '*.mp4', '*.mov', '*.mp3', '*.ogg', '*.pdf', '*credentials*', '*service-account*',
+  '*secret*', '*passkey*', '*session*', 'sa.json', '*-sa.json', '*sa-key*', '*token*', '*vault*.json', 'master.key', '*.bak*', '*.quebrado*'];
 
 function codigo(res, pasta) {
   const args = [pasta, '('];
