@@ -26,7 +26,9 @@ Serve só para ele confirmar que a sessão está neste projeto — não é senha
 ## Agendamento de mensagens nos grupos (2026-10-03)
 Banco pronto: `nestor.agendamentos`, `nestor.envios`, `nestor.agendamentos_pendentes()` e
 `nestor.agenda_do_dia(data)` (eventos aprovados + tarefas abertas). Agendamento id 1 = agenda do dia
-no grupo **Secretário**, 07:30, seg–sáb. O envio e a tela ficam no portal (VPS, feito pelo grupo DEV).
+no grupo **Secretário**, 07:30, seg–sáb. **Envio implementado em 2026-10-04** no portal (`agendador.js` do repo
+`ricardoamano/neostore-portal`): verifica a cada minuto, pausa no modo cofre, rotas `/api/agendamentos`, `/previa`, `/enviar`.
+Ainda sem tela no portal (editar horários direto na tabela `nestor.agendamentos`).
 Especificação: `integracoes/agendamentos-portal.md`. Script: `supabase/locadorafacil/002_agendamentos.sql`.
 
 **Modo de cada grupo**: já existe no portal (`/opt/neostore-portal/data/groups.json`, tela do portal: modo
