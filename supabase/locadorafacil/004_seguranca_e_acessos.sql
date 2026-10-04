@@ -19,6 +19,7 @@ ALTER FUNCTION public.bridge_criar_orcamento(text,text,text,date,date,jsonb,date
 -- 2) Papéis só-leitura do bridge passam a enxergar a base do NESTOR (antes não tinham acesso nenhum,
 --    por isso o grupo de apoio respondia de arquivos locais da VPS).
 GRANT USAGE ON SCHEMA nestor TO bridge_nestor_ro, bridge_nestor_apoio;
+GRANT USAGE ON SCHEMA extensions TO bridge_nestor_ro, bridge_nestor_apoio;  -- unaccent/similarity usados pela busca
 GRANT SELECT ON nestor.memoria, nestor.grupos TO bridge_nestor_ro, bridge_nestor_apoio;
 GRANT EXECUTE ON FUNCTION nestor.buscar_memoria(text, extensions.vector, boolean, text, integer) TO bridge_nestor_ro, bridge_nestor_apoio;
 GRANT EXECUTE ON FUNCTION nestor.resumo_categorias(boolean) TO bridge_nestor_ro, bridge_nestor_apoio;
