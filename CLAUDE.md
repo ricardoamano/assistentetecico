@@ -36,6 +36,13 @@ DEV/Informativo, sem financeiro, biblioteca, secretário). A tabela `nestor.grup
 **Revisão geral 2026-10-03**: `ops/revisao/RELATORIO.md` (problemas e correções), `ops/revisao/aplicar.sh`
 (aplica no portal com backup/rollback), `bin/memoria.js` = ferramenta do bot para a base (`buscar`, `item`, `guardar`).
 
+## Pendências combinadas com o Ricardo (lembrar)
+- **Avisos de escala dos técnicos** (`neostore-whatsapp-agent`): ainda envia pela Evolution (desligada) e falha.
+  Correção pronta: `ops/revisao/aplicar-agente.sh` (envia pelo bridge). **NÃO aplicar** até o Ricardo dizer que
+  o agente está pronto — lembrar ele periodicamente (decisão de 2026-10-04).
+- Grupo **Secretário** fica em modo DEV (decisão do Ricardo: grupo só dele).
+- Drive API e portal no GitHub: o Ricardo faz seguindo o passo a passo (`ops/portal-github.sh`).
+
 ## Destravar o bridge daqui (nestor-ops)
 Serviço `ops/nestor-ops.js` na VPS (PM2 `nestor-ops`, 127.0.0.1:3099, nginx em `https://nestor.neostore.app/ops/`).
 Só ações fixas, cabeçalho `x-ops-token` = variável de ambiente `NESTOR_OPS_TOKEN` desta nuvem
