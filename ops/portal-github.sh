@@ -53,7 +53,7 @@ EOG
   git config user.name "VPS Neostore"; git config user.email "vps@neostore.app"
   git add -A
   # trava de seguranca: nada de segredo indo para o GitHub
-  if git diff --cached --name-only | grep -Ei '(^|/)\.env|secret|passkey|session|sa\.json|\.pem$|\.key$|vault\.json|master\.key'; then
+  if git diff --cached --name-only | grep -Ei '(^|/)\.env|(^|/)totp-secret$|(^|/)passkeys\.json$|(^|/)(portal-)?sessions\.json$|(^|/)secretario\.json$|(^|/)google-sa\.json$|(^|/)sa\.json$|-sa-key|\.pem$|\.key$|vault\.json$|master\.key$|credenciais'; then
     echo "!! Arquivo sensivel detectado acima — nada foi enviado."; git reset -q; exit 1; fi
   git commit -qm "Portal NESTOR — versão da VPS em $(date +%F)" || true
   git remote get-url origin >/dev/null 2>&1 || git remote add origin "$REPO"
