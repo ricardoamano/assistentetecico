@@ -41,7 +41,15 @@ DEV/Informativo, sem financeiro, biblioteca, secretário). A tabela `nestor.grup
   Correção pronta: `ops/revisao/aplicar-agente.sh` (envia pelo bridge). **NÃO aplicar** até o Ricardo dizer que
   o agente está pronto — lembrar ele periodicamente (decisão de 2026-10-04).
 - Grupo **Secretário** fica em modo DEV (decisão do Ricardo: grupo só dele).
-- Drive API e portal no GitHub: o Ricardo faz seguindo o passo a passo (`ops/portal-github.sh`).
+- Drive API: o Ricardo ativa no projeto Google `claude-nestor-neostoresi` (conta neostoresi@gmail.com) e compartilha
+  as pastas com a conta de serviço `neostore-calendar@...` (mesmo robô da Agenda; chave já na VPS em data/google-sa.json).
+- **Portal no GitHub (desde 2026-10-04)**: repositório privado `ricardoamano/neostore-portal` (branch `main`).
+  A VPS sincroniza a cada 3 min (`/opt/neostore/portal-autodeploy.sh`, cron; log `/var/log/portal-autodeploy.log`):
+  alterações feitas na VPS pelo grupo DEV viram commit e sobem; o que for enviado ao GitHub é publicado após teste
+  de import (volta sozinho se quebrar). Para mudar o portal daqui: editar, commit e push na `main` — sem `--force`.
+  Arquivos sensíveis (.env, chave Google, TOTP, sessões, cofre) ficam fora do git.
+- ⚠️ Token do nestor-ops apareceu num print em 2026-10-04: pedir ao Ricardo para trocar (apagar
+  `/opt/neostore/segredos/nestor-ops.token`, rodar `ops/instalar.sh`, atualizar `NESTOR_OPS_TOKEN` no ambiente).
 
 ## Destravar o bridge daqui (nestor-ops)
 Serviço `ops/nestor-ops.js` na VPS (PM2 `nestor-ops`, 127.0.0.1:3099, nginx em `https://nestor.neostore.app/ops/`).
