@@ -52,9 +52,16 @@ EOG
   echo "repositório local: $(git -C "$P" rev-parse --git-dir)"
   git config user.name "VPS Neostore"; git config user.email "vps@neostore.app"
   git add -A
-  # trava de seguranca: nada de segredo indo para o GitHub
-  if git diff --cached --name-only | grep -Ei '(^|/)\.env|(^|/)totp-secret$|(^|/)passkeys\.json$|(^|/)(portal-)?sessions\.json$|(^|/)secretario\.json$|(^|/)google-sa\.json$|(^|/)sa\.json$|-sa-key|\.pem$|\.key$|vault\.json$|master\.key$|credenciais'; then
-    echo "!! Arquivo sensivel detectado acima — nada foi enviado."; git reset -q; exit 1; fi
+  # trava de seguranca: arquivo sensivel nunca vai para o GitHub — e retirado e entra no .gitignore
+  PADRAO='(^|/)\.env|(^|/)totp-secret$|(^|/)passkeys\.json$|(^|/)(portal-)?sessions\.json$|(^|/)secretario\.json$|(^|/)google-sa\.json$|(^|/)sa\.json$|-sa-key|\.pem$|\.key$|vault\.json$|master\.key$|credenciais'
+  SENS=$(git diff --cached --name-only | grep -Ei "$PADRAO" || true)
+  if [ -n "$SENS" ]; then
+    echo "Arquivos sensiveis RETIRADOS do envio (ficam so na VPS):"
+    while IFS= read -r f; do echo "  - $f"; git rm -q --cached -- "$f"; echo "/$f" >> .gitignore; done <<< "$SENS"
+    git add .gitignore
+  fi
+  if git diff --cached --name-only | grep -Eiq "$PADRAO"; then echo "!! Ainda ha arquivo sensivel — nada foi enviado."; git reset -q; exit 1; fi
+  echo "Arquivos que vao para o GitHub: $(git diff --cached --name-only | wc -l)"
   git commit -qm "Portal NESTOR — versão da VPS em $(date +%F)" || true
   git remote get-url origin >/dev/null 2>&1 || git remote add origin "$REPO"
   git push -u origin HEAD:main
@@ -68,6 +75,9 @@ cd /opt/neostore-portal || exit 0
 exec 9>/tmp/portal-autodeploy.lock; flock -n 9 || exit 0
 LOG=/var/log/portal-autodeploy.log
 git add -A >/dev/null 2>&1
+PADRAO='(^|/)\.env|(^|/)totp-secret$|(^|/)passkeys\.json$|(^|/)(portal-)?sessions\.json$|(^|/)secretario\.json$|(^|/)google-sa\.json$|(^|/)sa\.json$|-sa-key|\.pem$|\.key$|vault\.json$|master\.key$|credenciais'
+git diff --cached --name-only | grep -Ei "$PADRAO" | while IFS= read -r f; do git rm -q --cached -- "$f"; echo "/$f" >> .gitignore; echo "$(date) sensivel retirado: $f" >>$LOG; done
+git add .gitignore >/dev/null 2>&1
 git diff --cached --quiet || git commit -qm "Alteração feita na VPS (grupo DEV) $(date '+%F %H:%M')" >/dev/null 2>&1
 ANTES=$(git rev-parse HEAD)
 git pull -q --rebase origin main >>$LOG 2>&1 || { git rebase --abort >/dev/null 2>&1; echo "$(date) conflito no pull — nada mudou" >>$LOG; exit 0; }
