@@ -44,7 +44,12 @@ data/generated-images/
 data/*.db
 *.log
 EOG
-  [ -d .git ] || git init -q -b main
+  git config --global --add safe.directory "$P" 2>/dev/null || true
+  if [ -e .git ] && ! git -C "$P" rev-parse --git-dir >/dev/null 2>&1; then
+    mv .git ".git.invalido-$(date +%Y%m%d-%H%M%S)"; echo "(havia uma pasta .git quebrada — guardada com outro nome)"; fi
+  if ! git -C "$P" rev-parse --git-dir >/dev/null 2>&1; then
+    git init -q "$P"; git -C "$P" symbolic-ref HEAD refs/heads/main; fi
+  echo "repositório local: $(git -C "$P" rev-parse --git-dir)"
   git config user.name "VPS Neostore"; git config user.email "vps@neostore.app"
   git add -A
   # trava de seguranca: nada de segredo indo para o GitHub
@@ -52,7 +57,7 @@ EOG
     echo "!! Arquivo sensivel detectado acima — nada foi enviado."; git reset -q; exit 1; fi
   git commit -qm "Portal NESTOR — versão da VPS em $(date +%F)" || true
   git remote get-url origin >/dev/null 2>&1 || git remote add origin "$REPO"
-  git push -u origin main
+  git push -u origin HEAD:main
   echo "OK: código enviado para github.com/ricardoamano/neostore-portal";;
 
 autodeploy)
