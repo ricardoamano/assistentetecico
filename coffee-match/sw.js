@@ -1,7 +1,7 @@
 /* Service worker: guarda o jogo no tablet para funcionar sem internet.
    Ao publicar uma nova versão, aumente o número em VERSION. */
-const VERSION = 'coffee-match-v1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
+const VERSION = 'coffee-match-v2';
+const FILES = ['./', './index.html', './manifest.webmanifest', './fonts/GoogleSans-Variable.woff2', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
