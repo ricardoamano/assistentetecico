@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#ffffff">
+<title>Gemini Coffee Match</title>
+<style>
+  :root{
+    --blue:#4285F4; --red:#EA4335; --yellow:#FBBC04; --green:#34A853;
+    --ink:#202124; --ink2:#5f6368; --line:#e3e5e8; --bg:#ffffff;
+    --font:"Google Sans","Google Sans Text","Product Sans",Roboto,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    --rainbow:linear-gradient(90deg,#4285F4 0%,#34A853 25%,#FBBC04 50%,#EA4335 78%,#ff7bac 100%);
+    --gborder:linear-gradient(120deg,#4285F4 0%,#EA4335 38%,#FBBC04 66%,#34A853 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;background:#fff;overflow:hidden;font-family:var(--font);color:var(--ink);
+    user-select:none;-webkit-user-select:none;touch-action:manipulation}
+  #viewport{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#fff}
+  /* Palco fixo 1280x800 (16:10, proporção do Galaxy Tab A9+), escalado para caber */
+  #stage{width:1280px;height:800px;position:relative;overflow:hidden;background:var(--bg);transform-origin:center center;flex:none}
+
+  /* ===== fundo: grade em perspectiva (referência: capa do deck) ===== */
+  #bg{position:absolute;inset:0;pointer-events:none}
+  .screen{position:absolute;inset:0;opacity:0;visibility:hidden;transform:translateX(40px);
+    transition:opacity .45s ease,transform .45s ease,visibility 0s .45s}
+  .screen.active{opacity:1;visibility:visible;transform:none;transition:opacity .45s ease,transform .45s ease}
+
+  /* ===== cabeçalho / rodapé ===== */
+  .logo{position:absolute;left:56px;top:40px;font-size:30px;letter-spacing:-.3px;color:var(--ink2);font-weight:500;z-index:5}
+  .logo b{font-weight:600;letter-spacing:-.8px}
+  .logo .g1{color:#4285F4}.logo .o1{color:#EA4335}.logo .o2{color:#FBBC04}.logo .g2{color:#4285F4}.logo .l{color:#34A853}.logo .e{color:#EA4335}
+  .foot{position:absolute;left:56px;right:56px;bottom:30px;display:flex;justify-content:space-between;
+    font-size:15px;color:var(--ink2);z-index:5}
+  .foot b{color:var(--ink);font-weight:600}
+  .back{position:absolute;right:56px;top:36px;z-index:6;height:48px;padding:0 22px;border-radius:24px;border:2px solid var(--line);
+    background:#fff;font:600 17px var(--font);color:var(--ink2);display:flex;align-items:center;gap:8px;cursor:pointer}
+  .back:active{background:#f1f3f4}
+  .dots{position:absolute;left:50%;top:50px;transform:translateX(-50%);display:flex;gap:10px;z-index:5}
+  .dots i{width:10px;height:10px;border-radius:50%;background:var(--line);transition:all .3s}
+  .dots i.on{width:34px;border-radius:6px;background:var(--rainbow)}
+  .dots i.done{background:var(--blue)}
+
+  .bar{height:12px;border-radius:6px;background:var(--rainbow)}
+
+  /* ===== cartão com borda multicolor (referência: slide Menu Layout) ===== */
+  .gcard{border:6px solid transparent;border-radius:38px;
+    background:linear-gradient(#fff,#fff) padding-box,var(--gborder) border-box;
+    box-shadow:0 10px 30px rgba(60,64,67,.10)}
+
+  .spark{display:inline-block;vertical-align:middle}
+  h1{font-weight:600;letter-spacing:-1.5px;line-height:1.04}
+  .lead{color:var(--ink2);font-size:25px;line-height:1.4}
+
+  .btn{height:84px;padding:0 54px;border-radius:42px;border:0;background:var(--blue);color:#fff;
+    font:600 28px var(--font);letter-spacing:.5px;cursor:pointer;box-shadow:0 8px 20px rgba(66,133,244,.35);
+    transition:transform .15s,opacity .3s,background .3s}
+  .btn:active{transform:scale(.96)}
+  .btn.ghost{background:#fff;color:var(--blue);border:3px solid var(--blue);box-shadow:none}
+  .btn[disabled]{background:#dadce0;color:#fff;box-shadow:none;pointer-events:none}
+
+  /* ===== 1. idioma ===== */
+  #s-lang .brand{position:absolute;left:50%;top:150px;transform:translateX(-50%);width:760px;height:190px;
+    display:flex;align-items:center;justify-content:center;gap:28px}
+  #s-lang .brand .t{font-size:66px;font-weight:600;letter-spacing:-1.5px;line-height:1}
+  #s-lang .brand .t small{display:block;font-size:56px;font-weight:500;color:var(--ink);letter-spacing:-1px}
+  #s-lang .ask{position:absolute;top:385px;width:100%;text-align:center;color:var(--ink2);font-size:24px;letter-spacing:.2px}
+  #s-lang .langs{position:absolute;top:440px;left:0;right:0;display:flex;gap:28px;justify-content:center}
+  .lang{width:300px;height:190px;border-radius:32px;background:#fff;border:4px solid var(--line);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;transition:transform .15s,border-color .2s,box-shadow .2s}
+  .lang:active{transform:scale(.95)}
+  .lang .code{font-size:20px;font-weight:700;letter-spacing:2px;color:#fff;padding:5px 16px;border-radius:14px}
+  .lang .name{font-size:40px;font-weight:600;letter-spacing:-.5px}
+  .lang:nth-child(1) .code{background:var(--blue)} .lang:nth-child(1):active{border-color:var(--blue)}
+  .lang:nth-child(2) .code{background:var(--green)} .lang:nth-child(2):active{border-color:var(--green)}
+  .lang:nth-child(3) .code{background:var(--red)} .lang:nth-child(3):active{border-color:var(--red)}
+
+  /* ===== 2. start ===== */
+  #s-start .copy{position:absolute;left:56px;top:150px;width:640px}
+  #s-start .kick{display:flex;align-items:center;gap:12px;font-size:26px;font-weight:600;color:var(--blue);margin-bottom:22px}
+  #s-start h1{font-size:76px;margin-bottom:26px}
+  #s-start .lead{margin-bottom:46px;max-width:600px}
+  #s-start .art{position:absolute;right:56px;top:150px;width:470px;height:520px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  #glitch{position:absolute;right:36px;top:560px;width:230px;height:150px;opacity:.9;z-index:3}
+  .cups{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:20px}
+  .cups svg{width:150px;height:150px}
+
+  /* ===== 3. restrição ===== */
+  .title{position:absolute;left:56px;top:140px;right:56px}
+  .title h1{font-size:60px;margin-bottom:14px}
+  .title .lead{font-size:26px;max-width:900px}
+  .title .bar{width:360px;margin-top:22px}
+  .opts{position:absolute;left:56px;right:56px;top:350px;display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .opt{height:170px;border-radius:32px;background:#fff;border:4px solid var(--line);cursor:pointer;
+    display:flex;align-items:center;gap:26px;padding:0 34px;font-size:34px;font-weight:600;text-align:left;
+    transition:transform .15s,border-color .2s,background .2s;position:relative}
+  .opt .ic{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;flex:none}
+  .opt:nth-child(1) .ic{background:#e8f0fe}.opt:nth-child(2) .ic{background:#e6f4ea}
+  .opt:nth-child(3) .ic{background:#fef7e0}.opt:nth-child(4) .ic{background:#fce8e6}
+  .opt.sel{border-color:var(--blue);background:#f4f8ff;transform:scale(.98)}
+  .opt:active{transform:scale(.97)}
+
+  /* ===== 4. traços ===== */
+  #s-traits .title h1{font-size:52px;margin-bottom:8px}
+  #s-traits .title{top:104px}
+  #s-traits .title .lead{font-size:23px}
+  #s-traits .title .bar{margin-top:14px}
+  .count{position:absolute;right:56px;top:116px;font-size:22px;color:var(--ink2);display:flex;align-items:center;gap:12px}
+  .count .pips{display:flex;gap:8px}
+  .count .pips i{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);transition:all .25s}
+  .count .pips i.on{background:var(--blue);border-color:var(--blue)}
+  .cloud{position:absolute;left:56px;right:56px;top:282px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+  .chip{height:62px;border-radius:31px;background:#fff;border:3px solid var(--c);color:var(--ink);font:600 21px var(--font);
+    cursor:pointer;transition:transform .15s,background .2s,color .2s;display:flex;align-items:center;justify-content:center;padding:0 6px}
+  .chip:active{transform:scale(.94)}
+  .chip.sel{background:var(--c);color:#fff;transform:scale(1.04);box-shadow:0 6px 16px rgba(0,0,0,.18)}
+  .chip.dim{opacity:.35;pointer-events:none}
+  .cta{position:absolute;left:0;right:0;bottom:52px;display:flex;justify-content:center;
+    opacity:0;transform:translateY(20px);pointer-events:none;transition:all .4s}
+  .cta.show{opacity:1;transform:none;pointer-events:auto}
+
+  /* ===== 5. calculando ===== */
+  #s-think{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px}
+  #s-think .spin{animation:spin 2.4s cubic-bezier(.6,0,.4,1) infinite}
+  @keyframes spin{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.25)}100%{transform:rotate(360deg) scale(1)}}
+  #s-think .tt{font-size:40px;font-weight:600;letter-spacing:-.5px}
+  #s-think .bar{width:420px;background-size:200% 100%;animation:slide 1.2s linear infinite}
+  @keyframes slide{to{background-position:-200% 0}}
+
+  /* ===== 6. resultado ===== */
+  #s-result .card{position:absolute;left:56px;right:56px;top:108px;bottom:108px;padding:34px 44px;display:flex;gap:40px;align-items:center}
+  #s-result .pic{flex:none;width:300px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+    background:radial-gradient(circle at 50% 45%,#f4f8ff 0%,#fff 70%)}
+  #s-result .pic svg{width:280px;height:280px}
+  #s-result .pic .nm{font-size:38px;font-weight:700;letter-spacing:-.8px}
+  #s-result .txt{flex:1;min-width:0}
+  #s-result .kick{font-size:20px;font-weight:700;letter-spacing:1.5px;color:var(--blue);margin-bottom:6px;display:flex;align-items:center;gap:10px}
+  #s-result h2{font-size:50px;line-height:1.05;letter-spacing:-1.4px;font-weight:600;margin-bottom:12px}
+  #s-result h2 em{font-style:normal;color:var(--c)}
+  #s-result .desc{font-size:21px;line-height:1.38;color:var(--ink2);margin-bottom:12px}
+  #s-result .tag{font-size:22px;font-weight:600;margin-bottom:14px}
+  #s-result .rec{font-size:19px;color:var(--ink2);line-height:1.5;margin-bottom:8px}
+  #s-result .rec b{color:var(--ink)}
+  #s-result .veg{display:inline-flex;align-items:center;gap:8px;font-size:18px;font-weight:600;color:#137333;background:#e6f4ea;border-radius:16px;padding:8px 16px;margin-bottom:12px}
+  #s-result .prof{display:flex;flex-wrap:wrap;gap:8px}
+  #s-result .prof span{font-size:15px;font-weight:700;letter-spacing:.6px;padding:6px 14px;border-radius:16px;background:#f1f3f4;color:var(--ink2)}
+  .show-bar{position:absolute;left:56px;right:56px;bottom:30px;z-index:6;display:flex;align-items:center;justify-content:space-between}
+  .show-bar .msg{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px}
+  .show-bar .btn{height:52px;font-size:19px;padding:0 30px;box-shadow:none}
+  .idle{position:absolute;left:0;bottom:0;height:5px;background:var(--rainbow);width:100%;transform-origin:left;transform:scaleX(0)}
+</style>
+</head>
+<body>
+<!-- gradiente Gemini reutilizado em todos os ícones -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gem" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4285F4"/><stop offset=".35" stop-color="#EA4335"/>
+      <stop offset=".65" stop-color="#FBBC04"/><stop offset="1" stop-color="#34A853"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div id="viewport"><div id="stage">
+
+  <svg id="bg" viewBox="0 0 1280 800" preserveAspectRatio="none"></svg>
+
+  <div class="logo" id="logo"></div>
+  <button class="back" id="back" style="display:none"></button>
+  <div class="dots" id="dots" style="display:none"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="foot"><span id="f1"></span><b>Leader Series 2026</b></div>
+
+  <!-- 1 · IDIOMA -->
+  <section class="screen active" id="s-lang">
+    <div class="brand gcard">
+      <span id="sp-lang"></span>
+      <div class="t">Gemini<small>Coffee Match</small></div>
+    </div>
+    <div class="ask">Choose your language · Escolha seu idioma · Elige tu idioma</div>
+    <div class="langs">
+      <div class="lang" data-l="en"><span class="code">EN</span><span class="name">English</span></div>
+      <div class="lang" data-l="pt"><span class="code">PT</span><span class="name">Português</span></div>
+      <div class="lang" data-l="es"><span class="code">ES</span><span class="name">Español</span></div>
+    </div>
+  </section>
+
+  <!-- 2 · START -->
+  <section class="screen" id="s-start">
+    <div class="copy">
+      <div class="kick"><span id="sp-kick"></span>Gemini Coffee Match</div>
+      <h1 id="t-start"></h1>
+      <p class="lead" id="p-start"></p>
+      <button class="btn" id="b-start"></button>
+    </div>
+    <svg id="glitch" viewBox="0 0 230 150"></svg>
+    <div class="art gcard"><div class="cups" id="cups"></div></div>
+  </section>
+
+  <!-- 3 · RESTRIÇÃO -->
+  <section class="screen" id="s-diet">
+    <div class="title">
+      <h1 id="t-diet"></h1><p class="lead" id="p-diet"></p><div class="bar"></div>
+    </div>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- 4 · TRAÇOS -->
+  <section class="screen" id="s-traits">
+    <div class="title">
+      <h1 id="t-traits"></h1><p class="lead" id="p-traits"></p><div class="bar"></div>
+    </div>
+    <div class="count"><span id="cnt-lbl"></span><div class="pips"><i></i><i></i><i></i></div></div>
+    <div class="cloud" id="cloud"></div>
+    <div class="cta" id="cta"><button class="btn" id="b-go"></button></div>
+  </section>
+
+  <!-- 5 · CALCULANDO -->
+  <section class="screen" id="s-think">
+    <div class="spin" id="sp-think"></div>
+    <div class="tt" id="t-think"></div>
+    <div class="bar"></div>
+  </section>
+
+  <!-- 6 · RESULTADO -->
+  <section class="screen" id="s-result">
+    <div class="card gcard">
+      <div class="pic" id="r-pic"></div>
+      <div class="txt">
+        <div class="kick"><span id="sp-res"></span><span id="r-kick"></span></div>
+        <h2 id="r-head"></h2>
+        <p class="desc" id="r-desc"></p>
+        <p class="tag" id="r-tag"></p>
+        <p class="rec" id="r-rec"></p>
+        <div class="veg" id="r-veg" style="display:none"></div>
+        <div class="prof" id="r-prof"></div>
+      </div>
+    </div>
+    <div class="show-bar">
+      <div class="msg"><span id="sp-bar"></span><span id="r-show"></span></div>
+      <button class="btn ghost" id="b-again"></button>
+    </div>
+    <div class="idle" id="idle"></div>
+  </section>
+
+</div></div>
+
+<script>
+/* =========================================================
+   GEMINI COFFEE MATCH — protótipo (esboço jogável)
+   Fluxo: 1 Idioma → 2 Start → 3 Restrição → 4 Traços → 5 Resultado
+   Sem formulário, sem captação de lead, sem armazenamento de dados.
+   ========================================================= */
+
+/* ---------- textos (EN / PT / ES) ---------- */
+const UI = {
+  pt:{ start:'Qual café combina com você?',
+       startP:'Conte um pouco sobre você e descubra qual café do Café Por Elas combina com a sua personalidade.',
+       go:'COMEÇAR', back:'Voltar',
+       dietT:'Antes do match…', dietP:'Queremos que seu café seja o match perfeito para você. Selecione a opção que se aplica:',
+       diet:['Sou intolerante à lactose','Sou vegano(a)','Os dois','Nenhuma das opções'],
+       trT:'Agora é sobre você.', trP:'Escolha as 3 características que mais combinam com a sua personalidade.',
+       cnt:'Escolhidas', find:'DESCOBRIR MEU MATCH', think:'O Gemini está calculando sua personalidade…',
+       kick:'SEU COFFEE MATCH É', show:'Mostre esta tela ao barista', again:'Jogar de novo', recipe:'Receita', profile:'Perfil' },
+  en:{ start:'Which coffee is a match for you?',
+       startP:'Tell us a little about yourself and discover which Café Por Elas coffee suits your personality.',
+       go:'START', back:'Back',
+       dietT:'Before the match…', dietP:'We want your coffee to be a perfect match for you. Select the option that applies:',
+       diet:['I am lactose intolerant','I am vegan','Both of the above','None of the above'],
+       trT:'Now it’s about you.', trP:'Choose the 3 traits that best match your personality.',
+       cnt:'Selected', find:'DISCOVER MY MATCH', think:'Gemini is calculating your personality…',
+       kick:'YOUR COFFEE MATCH IS', show:'Show this screen to the barista', again:'Play again', recipe:'Recipe', profile:'Profile' },
+  es:{ start:'¿Qué café es tu match?',
+       startP:'Cuéntanos un poco sobre ti y descubre qué café de Café Por Elas combina con tu personalidad.',
+       go:'COMENZAR', back:'Volver',
+       dietT:'Antes del match…', dietP:'Queremos que tu café sea el match perfecto para ti. Selecciona la opción que aplique:',
+       diet:['Soy intolerante a la lactosa','Soy vegano/a','Ambas','Ninguna de las anteriores'],
+       trT:'Ahora se trata de ti.', trP:'Elige las 3 características que mejor combinan con tu personalidad.',
+       cnt:'Elegidas', find:'DESCUBRIR MI MATCH', think:'Gemini está calculando tu personalidad…',
+       kick:'TU COFFEE MATCH ES', show:'Muestra esta pantalla al barista', again:'Jugar de nuevo', recipe:'Receta', profile:'Perfil' }
+};
+
+/* 25 palavras da nuvem → café (5 por café). Mapeamento SUGERIDO a partir dos "perfis associados" do deck — validar com o cliente. */
+const WORDS = [
+ // id, café, [en, pt, es]
+ ['intense','esp',['Intense','Intenso(a)','Intenso/a']],
+ ['determined','esp',['Determined','Decidido(a)','Decidido/a']],
+ ['confident','esp',['Confident','Confiante','Seguro/a']],
+ ['practical','esp',['Practical','Prático(a)','Práctico/a']],
+ ['uncomplicated','esp',['Uncomplicated','Descomplicado(a)','Sin complicaciones']],
+ ['welcoming','cap',['Welcoming','Acolhedor(a)','Acogedor/a']],
+ ['classic','cap',['Classic','Clássico(a)','Clásico/a']],
+ ['calm','cap',['Calm','Tranquilo(a)','Tranquilo/a']],
+ ['balanced','cap',['Balanced','Equilibrado(a)','Equilibrado/a']],
+ ['passionate','cap',['Passionate','Apaixonado(a)','Apasionado/a']],
+ ['sophisticated','mac',['Sophisticated','Sofisticado(a)','Sofisticado/a']],
+ ['elegant','mac',['Elegant','Elegante','Elegante']],
+ ['observant','mac',['Observant','Observador(a)','Observador/a']],
+ ['independent','mac',['Independent','Independente','Independiente']],
+ ['delicate','mac',['Delicate','Delicado(a)','Delicado/a']],
+ ['creative','cum',['Creative','Criativo(a)','Creativo/a']],
+ ['curious','cum',['Curious','Curioso(a)','Curioso/a']],
+ ['original','cum',['Original','Original','Original']],
+ ['adventurous','cum',['Adventurous','Aventureiro(a)','Aventurero/a']],
+ ['authentic','cum',['Authentic','Autêntico(a)','Auténtico/a']],
+ ['bold','cpt',['Bold','Ousado(a)','Atrevido/a']],
+ ['spontaneous','cpt',['Spontaneous','Espontâneo(a)','Espontáneo/a']],
+ ['fun','cpt',['Fun','Divertido(a)','Divertido/a']],
+ ['surprising','cpt',['Surprising','Surpreendente','Sorprendente']],
+ ['energetic','cpt',['Energetic','Enérgico(a)','Enérgico/a']]
+];
+/* ordem visual embaralhada (misturar cafés na grade) */
+const ORDER = [0,5,10,15,20, 11,21,1,6,16, 17,2,22,12,7, 8,13,18,3,23, 24,4,9,14,19];
+
+const COFFEES = {
+  esp:{ color:'#EA4335', vegan:false, name:{en:'Espresso',pt:'Espresso',es:'Espresso'},
+    head:{pt:'Você é <em>intenso(a), decidido(a) e autêntico(a).</em>',en:'You are <em>intense, determined and authentic.</em>',es:'Eres <em>intenso/a, decidido/a y auténtico/a.</em>'},
+    desc:{pt:'Sabe o que quer, valoriza objetividade e não precisa de muitos rodeios. Tem presença e encara a rotina com energia.',
+          en:'You know what you want, value directness and don’t need much fuss. You have presence and take on your routine with energy.',
+          es:'Sabes lo que quieres, valoras la practicidad y no necesitas rodeos. Tienes presencia y enfrentas la rutina con energía.'},
+    tag:{pt:'Um café direto, marcante e cheio de personalidade — como você.',en:'A direct, striking coffee full of personality — just like you.',es:'Un café directo, contundente y lleno de personalidad, como tú.'},
+    rec:{pt:['1 dose de espresso de café especial'],en:['1 shot of specialty espresso'],es:['1 dosis de espresso de café especial']},
+    note:{pt:'Sem leite na receita.',en:'No milk in the recipe.',es:'Sin leche en la receta.'},
+    prof:{pt:['INTENSO(A)','DECIDIDO(A)','PRÁTICO(A)','CONFIANTE','AUTÊNTICO(A)'],en:['INTENSE','DETERMINED','PRACTICAL','CONFIDENT','AUTHENTIC'],es:['INTENSO/A','DECIDIDO/A','PRÁCTICO/A','SEGURO/A','AUTÉNTICO/A']} },
+  cap:{ color:'#4285F4', vegan:true, name:{en:'Cappuccino',pt:'Cappuccino',es:'Cappuccino'},
+    head:{pt:'Você é <em>acolhedor(a), equilibrado(a) e clássico(a).</em>',en:'You are <em>welcoming, balanced and classic.</em>',es:'Eres <em>acogedor/a, equilibrado/a y clásico/a.</em>'},
+    desc:{pt:'Gosta de boas combinações, valoriza conforto e acredita que os melhores momentos são aqueles que fazem a gente se sentir em casa.',
+          en:'You like good combinations, value comfort and believe the best moments are the ones that make us feel at home.',
+          es:'Te gustan las buenas combinaciones, valoras la comodidad y crees que los mejores momentos son los que nos hacen sentir en casa.'},
+    tag:{pt:'Equilibrado e acolhedor, é companhia certeira para qualquer momento.',en:'Balanced and cozy, a sure companion for any moment.',es:'Equilibrado y acogedor, compañía segura para cualquier momento.'},
+    rec:{pt:['1 dose de espresso','Leite vaporizado','Espuma de leite'],en:['1 shot of espresso','Steamed milk','Milk foam'],es:['1 dosis de espresso','Leche vaporizada','Espuma de leche']},
+    veg:{pt:'Versão vegetal disponível: leite animal substituído por leite vegetal.',en:'Plant-based version available: dairy milk replaced with plant-based milk.',es:'Versión vegetal disponible: leche animal sustituida por leche vegetal.'},
+    prof:{pt:['ACOLHEDOR(A)','CLÁSSICO(A)','TRANQUILO(A)','EQUILIBRADO(A)','APAIXONADO(A)'],en:['WELCOMING','CLASSIC','CALM','BALANCED','PASSIONATE'],es:['ACOGEDOR/A','CLÁSICO/A','TRANQUILO/A','EQUILIBRADO/A','APASIONADO/A']} },
+  mac:{ color:'#FBBC04', vegan:true, name:{en:'Macchiato',pt:'Macchiato',es:'Macchiato'},
+    head:{pt:'Você é <em>sofisticado(a), independente e observador(a).</em>',en:'You are <em>sophisticated, independent and observant.</em>',es:'Eres <em>sofisticado/a, independiente y observador/a.</em>'},
+    desc:{pt:'Tem personalidade própria, aprecia os detalhes e sabe que contrastes interessantes podem criar combinações surpreendentes.',
+          en:'You have a personality of your own, appreciate the details and know that interesting contrasts can create surprising combinations.',
+          es:'Tienes personalidad propia, aprecias los detalles y sabes que los contrastes interesantes pueden crear combinaciones sorprendentes.'},
+    tag:{pt:'Personalidade e delicadeza na medida certa.',en:'Personality and delicacy in just the right measure.',es:'Personalidad y delicadeza en su justa medida.'},
+    rec:{pt:['1 dose de espresso','1 colherada de espuma de leite'],en:['1 shot of espresso','1 spoonful of milk foam'],es:['1 dosis de espresso','1 cucharada de espuma de leche']},
+    veg:{pt:'Versão vegetal disponível: espuma feita com leite vegetal.',en:'Plant-based version available: foam made with plant-based milk.',es:'Versión vegetal disponible: espuma de leche vegetal.'},
+    prof:{pt:['SOFISTICADO(A)','ELEGANTE','OBSERVADOR(A)','INDEPENDENTE','DELICADO(A)'],en:['SOPHISTICATED','ELEGANT','OBSERVANT','INDEPENDENT','DELICATE'],es:['SOFISTICADO/A','ELEGANTE','OBSERVADOR/A','INDEPENDIENTE','DELICADO/A']} },
+  cum:{ color:'#34A853', vegan:true, name:{en:'Cumaru Latte',pt:'Cumaru Latte',es:'Cumaru Latte'},
+    head:{pt:'Você é <em>criativo(a), curioso(a) e original.</em>',en:'You are <em>creative, curious and original.</em>',es:'Eres <em>creativo/a, curioso/a y original.</em>'},
+    desc:{pt:'Gosta de descobrir coisas novas, valoriza autenticidade e sempre encontra um jeito de colocar sua personalidade nas suas escolhas.',
+          en:'You love discovering new things, value authenticity and always find a way to put your personality into your choices.',
+          es:'Te gusta descubrir cosas nuevas, valoras la autenticidad y siempre encuentras la forma de poner tu personalidad en tus elecciones.'},
+    tag:{pt:'Um encontro entre café e brasilidade para quem gosta de sair do óbvio.',en:'Where coffee meets Brazilian flavor, for those who like to go beyond the obvious.',es:'Un encuentro entre café y brasilidad para quienes les gusta salir de lo obvio.'},
+    rec:{pt:['1 dose de espresso','Leite vaporizado','Xarope artesanal de cumaru'],en:['1 shot of espresso','Steamed milk','Artisanal cumaru syrup'],es:['1 dosis de espresso','Leche vaporizada','Almíbar artesanal de cumarú']},
+    veg:{pt:'Versão vegetal disponível: leite animal substituído por leite vegetal.',en:'Plant-based version available: dairy milk replaced with plant-based milk.',es:'Versión vegetal disponible: leche animal sustituida por leche vegetal.'},
+    prof:{pt:['CRIATIVO(A)','CURIOSO(A)','ORIGINAL','AVENTUREIRO(A)','AUTÊNTICO(A)'],en:['CREATIVE','CURIOUS','ORIGINAL','ADVENTUROUS','AUTHENTIC'],es:['CREATIVO/A','CURIOSO/A','ORIGINAL','AVENTURERO/A','AUTÉNTICO/A']} },
+  cpt:{ color:'#EA4335', vegan:false, name:{en:'Caputina',pt:'Caputina',es:'Caputina'},
+    head:{pt:'Você é <em>ousado(a), espontâneo(a) e surpreendente.</em>',en:'You are <em>bold, spontaneous and surprising.</em>',es:'Eres <em>atrevido/a, espontáneo/a y sorprendente.</em>'},
+    desc:{pt:'Gosta de experimentar, não tem medo do diferente e acredita que sair do esperado deixa tudo mais interessante.',
+          en:'You like to experiment, aren’t afraid of the different and believe that going beyond the expected makes everything more interesting.',
+          es:'Te gusta experimentar, no le temes a lo diferente y crees que salir de lo esperado hace todo más interesante.'},
+    tag:{pt:'Refrescante, inesperada e feita para quem gosta de uma surpresa.',en:'Refreshing, unexpected and made for those who love a surprise.',es:'Refrescante, inesperada y hecha para quienes disfrutan de una sorpresa.'},
+    rec:{pt:['Cold brew','Leite texturizado','Xarope levemente doce'],en:['Cold brew','Textured milk','Lightly sweet syrup'],es:['Cold brew','Leche texturizada','Almíbar ligeramente dulce']},
+    prof:{pt:['OUSADO(A)','ESPONTÂNEO(A)','DIVERTIDO(A)','SURPREENDENTE','ENÉRGICO(A)'],en:['BOLD','SPONTANEOUS','FUN','SURPRISING','ENERGETIC'],es:['ATREVIDO/A','ESPONTÁNEO/A','DIVERTIDO/A','SORPRENDENTE','ENÉRGICO/A']} }
+};
+/* Caputina não pode ser servida a vegano/intolerante. Se a pessoa cair nela, o jogo oferece o próximo melhor match (ou Cumaru Latte). */
+const FALLBACK = 'cum';
+
+/* ---------- ilustrações dos copos (SVG simples — substituir pelos assets oficiais) ---------- */
+function cup(k){
+  const saucer='<ellipse cx="100" cy="168" rx="78" ry="12" fill="#e8eaed"/><ellipse cx="100" cy="164" rx="62" ry="9" fill="#fff" stroke="#dadce0" stroke-width="2"/>';
+  const steam='<path d="M80 40c-10 12 10 20 0 34M104 32c-10 12 10 20 0 34M126 40c-10 12 10 20 0 34" fill="none" stroke="#dadce0" stroke-width="5" stroke-linecap="round"/>';
+  const wrap=s=>`<svg viewBox="0 0 200 200" aria-hidden="true">${s}</svg>`;
+  if(k==='esp') return wrap(`${steam}${saucer}<path d="M52 104h96v22c0 22-18 38-48 38s-48-16-48-38z" fill="#fff" stroke="#dadce0" stroke-width="3"/><path d="M148 112c22-2 22 28 0 28" fill="none" stroke="#dadce0" stroke-width="7" stroke-linecap="round"/><ellipse cx="100" cy="104" rx="48" ry="11" fill="#5b3a29"/><ellipse cx="100" cy="102" rx="38" ry="7" fill="#8a5a3c"/>`);
+  if(k==='cap') return wrap(`${steam}${saucer}<path d="M38 88h124v28c0 30-26 50-62 50s-62-20-62-50z" fill="#fff" stroke="#dadce0" stroke-width="3"/><path d="M162 98c26-2 26 34 0 34" fill="none" stroke="#dadce0" stroke-width="8" stroke-linecap="round"/><ellipse cx="100" cy="88" rx="62" ry="14" fill="#f5e6d3"/><path d="M100 96c-16-10-18-22-6-22 4 0 6 2 6 5 0-3 2-5 6-5 12 0 10 12-6 22z" fill="#a87650"/>`);
+  if(k==='mac') return wrap(`${saucer}<path d="M56 100h88l-6 54c-2 8-10 12-38 12s-36-4-38-12z" fill="#fff" fill-opacity=".7" stroke="#dadce0" stroke-width="3"/><path d="M60 118h80l-4 36c-2 6-10 8-36 8s-34-2-36-8z" fill="#5b3a29"/><ellipse cx="100" cy="118" rx="40" ry="8" fill="#f5e6d3"/><path d="M78 118c0-14 10-22 22-22s22 8 22 22z" fill="#fff" stroke="#efe3d3" stroke-width="2"/>`);
+  if(k==='cum') return wrap(`${steam}${saucer}<path d="M54 74h92l-8 80c-2 10-14 12-38 12s-36-2-38-12z" fill="#fff" fill-opacity=".6" stroke="#dadce0" stroke-width="3"/><path d="M58 112h84l-4 42c-2 8-12 10-38 10s-36-2-38-10z" fill="#7a4b2f"/><path d="M57 94h86l-1 18H58z" fill="#e9c9a4"/><path d="M56 80h88l-1 14H57z" fill="#fff"/><circle cx="100" cy="128" r="9" fill="#34A853" opacity=".9"/><path d="M96 128l3 3 6-7" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`);
+  return wrap(`${saucer.replace('cy="164"','cy="166"')}<path d="M62 50h76l-8 112c0 6-8 8-30 8s-30-2-30-8z" fill="#fff" fill-opacity=".55" stroke="#cfd3d8" stroke-width="3"/><path d="M68 112h64l-4 50c0 4-8 6-28 6s-28-2-28-6z" fill="#4a2e22"/><path d="M66 82h68l-2 30H68z" fill="#e9d3b6"/><path d="M64 62h72l-2 20H66z" fill="#fff"/><rect x="74" y="92" width="18" height="18" rx="4" fill="#fff" fill-opacity=".75" transform="rotate(-12 83 101)"/><rect x="104" y="126" width="18" height="18" rx="4" fill="#fff" fill-opacity=".5" transform="rotate(10 113 135)"/><path d="M112 30l4 60" stroke="#EA4335" stroke-width="7" stroke-linecap="round"/>`);
+}
+
+const SPARK = (s=56)=>`<svg class="spark" width="${s}" height="${s}" viewBox="0 0 24 24"><path fill="url(#gem)" d="M12 0C12 6.6 17.4 12 24 12 17.4 12 12 17.4 12 24 12 17.4 6.6 12 0 12 6.6 12 12 6.6 12 0Z"/></svg>`;
+
+/* ---------- estado ---------- */
+const S = { lang:null, diet:null, picks:[], step:0 };
+const $ = id=>document.getElementById(id);
+const screens = ['s-lang','s-start','s-diet','s-traits','s-think','s-result'];
+let idleTimer=null, resultTimer=null;
+
+/* ---------- escala do palco 1280x800 para qualquer tela ---------- */
+function fit(){ const s=Math.min(innerWidth/1280, innerHeight/800); $('stage').style.transform=`scale(${s})`; }
+addEventListener('resize',fit); fit();
+
+/* ---------- fundo: grade em perspectiva + bloco "glitch" (linguagem da capa) ---------- */
+(function(){
+  const vp=[1000,330]; let d='';
+  for(let i=0;i<=12;i++){ const x=-200+i*180; d+=`<line x1="${vp[0]}" y1="${vp[1]}" x2="${x}" y2="800"/>`; }
+  let y=345,step=8; for(let i=0;i<9;i++){ d+=`<line x1="0" y1="${y}" x2="1280" y2="${y}"/>`; y+=step; step*=1.42; }
+  let wall=''; for(let i=0;i<4;i++) wall+=`<line x1="${940+i*44}" y1="0" x2="${940+i*44}" y2="330"/>`;
+  for(let j=0;j<5;j++) wall+=`<line x1="940" y1="${j*70}" x2="1072" y2="${j*70}"/>`;
+  $('bg').innerHTML=`<g stroke="#e8eaed" stroke-width="2" fill="none" opacity=".9">${d}${wall}</g>`;
+
+  const cols=['#4285F4','#34A853','#FBBC04','#EA4335','#8ab4f8','#81c995'];
+  let g=''; for(let i=0;i<150;i++){ const y=Math.random()*150, x=Math.random()*130, w=30+Math.random()*100;
+    g+=`<rect x="${x}" y="${y}" width="${w}" height="1.8" fill="${cols[(Math.random()*cols.length)|0]}" opacity="${.4+Math.random()*.6}"/>`; }
+  $('glitch').innerHTML=g;
+})();
+
+/* ---------- navegação ---------- */
+function go(id){
+  screens.forEach(s=>$(s).classList.toggle('active',s===id));
+  const idx=screens.indexOf(id);
+  const showChrome = idx>=1 && id!=='s-think';
+  $('back').style.display = (idx>=1 && idx<=3)||id==='s-result' ? 'flex':'none';
+  $('dots').style.display = (idx>=1 && idx<=3)?'flex':'none';
+  [...$('dots').children].forEach((d,i)=>{ d.className = i<idx-1?'done': i===idx-1?'on':''; });
+  $('logo').style.opacity = id==='s-lang'?0:1;
+  document.querySelector('.foot').style.opacity = id==='s-result'?0:1;
+  armIdle();
+}
+function armIdle(){
+  clearTimeout(idleTimer); clearTimeout(resultTimer);
+  $('idle').style.transition='none'; $('idle').style.transform='scaleX(0)';
+  const cur = screens.find(s=>$(s).classList.contains('active'));
+  if(cur==='s-lang'||cur==='s-think') return;
+  const ms = cur==='s-result' ? 40000 : 60000;     // kiosk: volta sozinho ao início
+  if(cur==='s-result'){ requestAnimationFrame(()=>{ $('idle').style.transition=`transform ${ms}ms linear`; $('idle').style.transform='scaleX(1)'; }); }
+  idleTimer=setTimeout(reset,ms);
+}
+['pointerdown','touchstart'].forEach(e=>addEventListener(e,()=>{ const cur=screens.find(s=>$(s).classList.contains('active')); if(cur&&cur!=='s-result') armIdle(); },{passive:true}));
+function reset(){ S.lang=null;S.diet=null;S.picks=[]; go('s-lang'); applyLang('pt',true); }
+
+/* ---------- aplicar idioma ---------- */
+function applyLang(l,silent){
+  const t=UI[l]; document.documentElement.lang=l;
+  if(!silent) S.lang=l;
+  $('t-start').textContent=t.start; $('p-start').textContent=t.startP; $('b-start').textContent=t.go;
+  $('t-diet').textContent=t.dietT; $('p-diet').textContent=t.dietP;
+  $('t-traits').textContent=t.trT; $('p-traits').textContent=t.trP; $('b-go').textContent=t.find;
+  $('t-think').textContent=t.think; $('back').innerHTML='‹ '+t.back; $('b-again').textContent=t.again;
+  $('cnt-lbl').textContent=t.cnt; $('r-show').textContent=t.show;
+  $('opts').innerHTML = ['🥛','🌱','🥛🌱','☕'].map((ic,i)=>
+     `<div class="opt" data-d="${['lactose','vegan','both','none'][i]}"><span class="ic">${ic}</span><span>${t.diet[i]}</span></div>`).join('');
+  document.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{
+    document.querySelectorAll('.opt').forEach(x=>x.classList.remove('sel')); o.classList.add('sel');
+    S.diet=o.dataset.d; setTimeout(()=>{ buildCloud(); go('s-traits'); },380);
+  });
+}
+
+/* ---------- nuvem de palavras ---------- */
+function buildCloud(){
+  const li={en:0,pt:1,es:2}[S.lang]; S.picks=[];
+  const colors=['#4285F4','#EA4335','#FBBC04','#34A853'];
+  $('cloud').innerHTML = ORDER.map((wi,i)=>{
+    const w=WORDS[wi]; return `<button class="chip" data-w="${wi}" style="--c:${colors[i%4]}">${w[2][li]}</button>`; }).join('');
+  document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
+    const wi=+c.dataset.w, at=S.picks.indexOf(wi);
+    if(at>=0){ S.picks.splice(at,1); c.classList.remove('sel'); }
+    else if(S.picks.length<3){ S.picks.push(wi); c.classList.add('sel'); }
+    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('dim',S.picks.length===3&&!x.classList.contains('sel')));
+    document.querySelectorAll('.pips i').forEach((p,i)=>p.classList.toggle('on',i<S.picks.length));
+    $('cta').classList.toggle('show',S.picks.length===3);
+  });
+  document.querySelectorAll('.pips i').forEach(p=>p.classList.remove('on'));
+  $('cta').classList.remove('show');
+}
+
+/* ---------- cálculo do match ---------- */
+function match(){
+  const score={esp:0,cap:0,mac:0,cum:0,cpt:0};
+  S.picks.forEach((wi,i)=>{ score[WORDS[wi][1]] += 1 + (2-i)*0.01; });   // desempate: primeira escolha pesa um pouco mais
+  const restricted = S.diet && S.diet!=='none';
+  if(restricted) delete score.cpt;
+  const best = Object.entries(score).sort((a,b)=>b[1]-a[1])[0];
+  return (best && best[1]>0) ? best[0] : FALLBACK;
+}
+
+/* ---------- resultado ---------- */
+function showResult(){
+  const l=S.lang, t=UI[l], k=match(), c=COFFEES[k];
+  const restricted = S.diet && S.diet!=='none';
+  $('r-pic').innerHTML = cup(k)+`<div class="nm">${c.name[l]}</div>`;
+  $('r-kick').textContent = t.kick;
+  $('r-head').style.setProperty('--c',c.color);
+  $('r-head').innerHTML = c.head[l];
+  $('r-desc').textContent = c.desc[l];
+  $('r-tag').textContent = c.tag[l];
+  $('r-rec').innerHTML = `<b>${t.recipe}:</b> ${c.rec[l].join(' · ')}${c.note?' · '+c.note[l]:''}`;
+  const v=$('r-veg');
+  if(restricted && c.veg){ v.style.display='inline-flex'; v.textContent='🌱 '+c.veg[l]; } else v.style.display='none';
+  $('r-prof').innerHTML = c.prof[l].map(p=>`<span>${p}</span>`).join('');
+  go('s-result');
+}
+
+/* ---------- ligações ---------- */
+document.querySelectorAll('.lang').forEach(b=>b.onclick=()=>{ applyLang(b.dataset.l); go('s-start'); });
+$('b-start').onclick=()=>go('s-diet');
+$('b-go').onclick=()=>{ go('s-think'); setTimeout(showResult,2600); };
+$('b-again').onclick=reset;
+$('back').onclick=()=>{
+  const cur=screens.find(s=>$(s).classList.contains('active'));
+  if(cur==='s-start') go('s-lang'); else if(cur==='s-diet') go('s-start');
+  else if(cur==='s-traits') go('s-diet'); else if(cur==='s-result') reset();
+};
+
+/* ---------- elementos fixos ---------- */
+$('logo').innerHTML='<span class="g1">G</span><span class="o1">o</span><span class="o2">o</span><span class="g2">g</span><span class="l">l</span><span class="e">e</span> <span>for Education</span>';
+$('f1').innerHTML='<span>Higher Education · São Paulo</span>';
+['sp-lang','sp-kick','sp-res','sp-bar'].forEach(id=>$(id).innerHTML=SPARK(id==='sp-lang'?96:id==='sp-bar'?30:34));
+$('sp-think').innerHTML=SPARK(120);
+$('cups').innerHTML=['esp','cap','mac','cum','cpt'].map(cup).join('');
+applyLang('pt',true);
+go('s-lang');
+</script>
+</body>
+</html>
