@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
 <title>Gemini Coffee Match</title>
 <style>
   :root{
@@ -416,7 +418,7 @@ function armIdle(){
   $('idle').style.transition='none'; $('idle').style.transform='scaleX(0)';
   const cur = screens.find(s=>$(s).classList.contains('active'));
   if(cur==='s-lang'||cur==='s-think') return;
-  const ms = cur==='s-result' ? 40000 : 60000;     // kiosk: volta sozinho ao início
+  const ms = 40000;     // kiosk: volta sozinho ao início
   if(cur==='s-result'){ requestAnimationFrame(()=>{ $('idle').style.transition=`transform ${ms}ms linear`; $('idle').style.transform='scaleX(1)'; }); }
   idleTimer=setTimeout(reset,ms);
 }
@@ -504,6 +506,7 @@ $('sp-think').innerHTML=SPARK(120);
 $('cups').innerHTML=['esp','cap','mac','cum','cpt'].map(cup).join('');
 applyLang('pt',true);
 go('s-lang');
+if('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
