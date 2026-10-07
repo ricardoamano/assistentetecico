@@ -1,0 +1,78 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Gemini Coffee Match — Lógica do match</title>
+<style>
+@font-face{font-family:"Google Sans";src:url("file:///home/user/assistentetecico/coffee-match/fonts/GoogleSans-Variable.woff2") format("woff2");font-weight:400 700}
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Google Sans",Roboto,Arial,sans-serif;color:#202124;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:297mm;height:210mm;padding:14mm 16mm;position:relative;page-break-after:always;overflow:hidden}
+.bar{height:7px;border-radius:4px;background:linear-gradient(90deg,#4285F4,#34A853 25%,#FBBC04 50%,#EA4335 78%,#ff7bac);width:90mm;margin:5mm 0 6mm}
+.kick{color:#4285F4;font-weight:600;font-size:13px;letter-spacing:.3px}
+h1{font-size:34px;font-weight:600;letter-spacing:-1px;line-height:1.05}
+h2{font-size:20px;font-weight:600;letter-spacing:-.4px;margin-bottom:4mm}
+p,li{font-size:13.5px;line-height:1.45;color:#3c4043}
+.foot{position:absolute;left:16mm;right:16mm;bottom:9mm;display:flex;justify-content:space-between;font-size:11px;color:#5f6368}
+.cafes{display:grid;grid-template-columns:repeat(5,1fr);gap:4mm;margin-top:3mm}
+.cafe{border:2px solid var(--c);border-radius:14px;padding:4mm}
+.cafe h3{font-size:15px;color:var(--c);margin-bottom:2.5mm;font-weight:700}
+.chip{display:block;font-size:12.5px;font-weight:500;padding:1.6mm 0;border-bottom:1px solid #eee}
+.chip:last-child{border:0}
+sup{font-size:9px;color:#5f6368}
+.two{display:grid;grid-template-columns:1.1fr 1fr;gap:10mm;align-items:center}
+.steps li{margin:0 0 3mm 5mm}
+.steps b{color:#202124}
+.pl{font:700 14px "Google Sans";fill:#5f6368} .nt{font:700 18px "Google Sans";fill:#fff} .nn{font:700 15px "Google Sans";fill:#202124}
+table{border-collapse:collapse;width:100%;margin-top:2mm}
+th{font-size:11.5px;text-align:left;color:#5f6368;font-weight:600;padding:2mm 2.5mm;border-bottom:2px solid #dadce0}
+td{font-size:12.5px;padding:2.4mm 2.5mm;border-bottom:1px solid #eee}
+td.n{text-align:center;font-weight:500;color:#5f6368} td.w{background:var(--c);color:#fff;font-weight:700;border-radius:6px}
+td.res{font-weight:700;color:var(--c)}
+.dist{display:grid;grid-template-columns:1fr 1fr;gap:8mm;margin-top:4mm}
+.note{font-size:11.5px;color:#5f6368;margin-top:3mm;line-height:1.4}
+.box{background:#f1f3f4;border-radius:12px;padding:4mm 5mm}
+.bars div{display:flex;align-items:center;gap:3mm;margin:1.6mm 0;font-size:12px}
+.bars span.b{height:11px;border-radius:6px;background:var(--c);display:inline-block}
+</style></head><body>
+<div class="page">
+  <div class="kick">Gemini Coffee Match · Leader Series 2026</div>
+  <h1>Como o jogo chega ao seu café</h1><div class="bar"></div>
+  <div class="two">
+    <div>
+      <h2>A lógica em 4 passos</h2>
+      <ol class="steps">
+        <li><b>A pessoa escolhe 3 palavras</b> de uma nuvem com 25 características.</li>
+        <li><b>Cada palavra pertence a um dos 5 cafés</b> (perfis do deck) e dá <b>2 pontos</b> a ele.</li>
+        <li><b>Os 5 cafés ficam num círculo de afinidade</b>. Cada palavra também dá <b>1 ponto</b> aos dois cafés vizinhos. Assim, palavras de perfis diferentes levam ao café "do meio" e quase não há empate.</li>
+        <li><b>Vence o café com mais pontos.</b> Se empatar, vale o café da primeira palavra tocada. Se a pessoa for vegana ou intolerante à lactose, a Caputina sai da disputa.</li>
+      </ol>
+    </div>
+    <div style="text-align:center"><svg viewBox="0 0 420 420" width="400" height="400"><line x1="210" y1="60" x2="343" y2="157" stroke="#bdc1c6" stroke-width="3"/><text x="277" y="113" text-anchor="middle" class="pl">+1</text><line x1="343" y1="157" x2="292" y2="313" stroke="#bdc1c6" stroke-width="3"/><text x="318" y="240" text-anchor="middle" class="pl">+1</text><line x1="292" y1="313" x2="128" y2="313" stroke="#bdc1c6" stroke-width="3"/><text x="210" y="318" text-anchor="middle" class="pl">+1</text><line x1="128" y1="313" x2="77" y2="157" stroke="#bdc1c6" stroke-width="3"/><text x="102" y="240" text-anchor="middle" class="pl">+1</text><line x1="77" y1="157" x2="210" y2="60" stroke="#bdc1c6" stroke-width="3"/><text x="143" y="113" text-anchor="middle" class="pl">+1</text><circle cx="210" cy="60" r="30" fill="#EA4335"/><text x="210" y="65" text-anchor="middle" class="nt">+2</text><text x="210" y="18" text-anchor="middle" class="nn">Espresso</text><circle cx="343" cy="157" r="30" fill="#F9AB00"/><text x="343" y="162" text-anchor="middle" class="nt">+2</text><text x="343" y="211" text-anchor="middle" class="nn">Macchiato</text><circle cx="292" cy="313" r="30" fill="#4285F4"/><text x="292" y="318" text-anchor="middle" class="nt">+2</text><text x="292" y="367" text-anchor="middle" class="nn">Cappuccino</text><circle cx="128" cy="313" r="30" fill="#34A853"/><text x="128" y="318" text-anchor="middle" class="nt">+2</text><text x="128" y="367" text-anchor="middle" class="nn">Cumaru Latte</text><circle cx="77" cy="157" r="30" fill="#A142F4"/><text x="77" y="162" text-anchor="middle" class="nt">+2</text><text x="77" y="211" text-anchor="middle" class="nn">Caputina</text></svg><p class="note">Círculo de afinidade: +2 para o café da palavra, +1 para cada vizinho.</p></div>
+  </div>
+  <div class="foot"><span>Google for Education · Higher Education · São Paulo</span><span>1 / 3</span></div>
+</div>
+<div class="page">
+  <h2>As 25 palavras e o café de cada uma</h2>
+  <div class="cafes"><div class="cafe" style="--c:#EA4335"><h3>Espresso</h3><span class="chip" style="--c:#EA4335">Intensa (o)</span><span class="chip" style="--c:#EA4335">Decidida (o)</span><span class="chip" style="--c:#EA4335">Confiante</span><span class="chip" style="--c:#EA4335">Prática (o)</span><span class="chip" style="--c:#EA4335">Autêntica (o)<sup>1</sup></span></div><div class="cafe" style="--c:#F9AB00"><h3>Macchiato</h3><span class="chip" style="--c:#F9AB00">Descomplicada (o)<sup>2</sup></span><span class="chip" style="--c:#F9AB00">Sofisticada (o)</span><span class="chip" style="--c:#F9AB00">Elegante</span><span class="chip" style="--c:#F9AB00">Observadora (o)</span><span class="chip" style="--c:#F9AB00">Independente</span><span class="chip" style="--c:#F9AB00">Delicada (o)</span></div><div class="cafe" style="--c:#4285F4"><h3>Cappuccino</h3><span class="chip" style="--c:#4285F4">Acolhedora (o)</span><span class="chip" style="--c:#4285F4">Clássica (o)</span><span class="chip" style="--c:#4285F4">Tranquila (o)</span><span class="chip" style="--c:#4285F4">Equilibrada (o)</span><span class="chip" style="--c:#4285F4">Apaixonada (o)</span></div><div class="cafe" style="--c:#34A853"><h3>Cumaru Latte</h3><span class="chip" style="--c:#34A853">Criativa (o)</span><span class="chip" style="--c:#34A853">Curiosa (o)</span><span class="chip" style="--c:#34A853">Original</span><span class="chip" style="--c:#34A853">Aventureira (o)</span><span class="chip" style="--c:#34A853">Autêntica (o)<sup>1</sup></span></div><div class="cafe" style="--c:#A142F4"><h3>Caputina</h3><span class="chip" style="--c:#A142F4">Ousada (o)</span><span class="chip" style="--c:#A142F4">Espontânea (o)</span><span class="chip" style="--c:#A142F4">Divertida (o)</span><span class="chip" style="--c:#A142F4">Surpreendente</span><span class="chip" style="--c:#A142F4">Enérgica (o)</span></div></div>
+  <p class="note"><sup>1</sup> "Autêntica" aparece nos perfis de Espresso e de Cumaru Latte, então vale para os dois. &nbsp; <sup>2</sup> "Descomplicada" não está em nenhum perfil do deck; sugestão: Macchiato ("elegância sem esforço"), que também equilibra os resultados. Pode ser alterada.</p>
+  <div class="foot"><span>Google for Education · Higher Education · São Paulo</span><span>2 / 3</span></div>
+</div>
+<div class="page">
+  <h2>Exemplos reais (calculados pelo próprio jogo)</h2>
+  <table><tr><th>3 palavras escolhidas</th><th>Restrição</th><th style="text-align:center">Espresso</th><th style="text-align:center">Macchiato</th><th style="text-align:center">Cappuccino</th><th style="text-align:center">Cumaru Latte</th><th style="text-align:center">Caputina</th><th>Resultado</th></tr><tr><td>Intensa (o) + Decidida (o) + Confiante</td><td>—</td><td class="n w" style="--c:#EA4335">6</td><td class="n" style="--c:#F9AB00">3</td><td class="n" style="--c:#4285F4">0</td><td class="n" style="--c:#34A853">0</td><td class="n" style="--c:#A142F4">3</td><td class="res" style="--c:#EA4335">Espresso</td></tr><tr><td>Criativa (o) + Curiosa (o) + Original</td><td>—</td><td class="n" style="--c:#EA4335">0</td><td class="n" style="--c:#F9AB00">0</td><td class="n" style="--c:#4285F4">3</td><td class="n w" style="--c:#34A853">6</td><td class="n" style="--c:#A142F4">3</td><td class="res" style="--c:#34A853">Cumaru Latte</td></tr><tr><td>Intensa (o) + Elegante + Clássica (o)</td><td>—</td><td class="n" style="--c:#EA4335">3</td><td class="n w" style="--c:#F9AB00">4</td><td class="n" style="--c:#4285F4">3</td><td class="n" style="--c:#34A853">1</td><td class="n" style="--c:#A142F4">1</td><td class="res" style="--c:#F9AB00">Macchiato</td></tr><tr><td>Acolhedora (o) + Criativa (o) + Divertida (o)</td><td>—</td><td class="n" style="--c:#EA4335">1</td><td class="n" style="--c:#F9AB00">1</td><td class="n" style="--c:#4285F4">3</td><td class="n w" style="--c:#34A853">4</td><td class="n" style="--c:#A142F4">3</td><td class="res" style="--c:#34A853">Cumaru Latte</td></tr><tr><td>Ousada (o) + Criativa (o) + Intensa (o)</td><td>—</td><td class="n" style="--c:#EA4335">3</td><td class="n" style="--c:#F9AB00">1</td><td class="n" style="--c:#4285F4">1</td><td class="n" style="--c:#34A853">3</td><td class="n w" style="--c:#A142F4">4</td><td class="res" style="--c:#A142F4">Caputina</td></tr><tr><td>Ousada (o) + Criativa (o) + Intensa (o)</td><td>Vegano / intolerante</td><td class="n" style="--c:#EA4335">3</td><td class="n" style="--c:#F9AB00">1</td><td class="n" style="--c:#4285F4">1</td><td class="n w" style="--c:#34A853">3</td><td class="n" style="--c:#A142F4">fora</td><td class="res" style="--c:#34A853">Cumaru Latte</td></tr><tr><td>Autêntica (o) + Delicada (o) + Tranquila (o)</td><td>—</td><td class="n" style="--c:#EA4335">3</td><td class="n w" style="--c:#F9AB00">4</td><td class="n" style="--c:#4285F4">4</td><td class="n" style="--c:#34A853">3</td><td class="n" style="--c:#A142F4">2</td><td class="res" style="--c:#F9AB00">Macchiato</td></tr></table>
+  <p class="note">Números nas colunas = pontos de cada café. Caputina "fora" = não é servida a quem é vegano ou intolerante à lactose.</p>
+  <div class="dist">
+    <div class="box"><h2 style="font-size:15px;margin-bottom:2mm">Com 2.300 combinações possíveis de 3 palavras, quem sai mais?</h2><div class="bars">
+      <div><span style="width:22mm">Cappuccino</span><span class="b" style="--c:#4285F4;width:72.9px"></span>24,3%</div>
+      <div><span style="width:22mm">Espresso</span><span class="b" style="--c:#EA4335;width:72.6px"></span>24,2%</div>
+      <div><span style="width:22mm">Macchiato</span><span class="b" style="--c:#F9AB00;width:59.400000000000006px"></span>19,8%</div>
+      <div><span style="width:22mm">Cumaru Latte</span><span class="b" style="--c:#34A853;width:57.300000000000004px"></span>19,1%</div>
+      <div><span style="width:22mm">Caputina</span><span class="b" style="--c:#A142F4;width:37.8px"></span>12,6%</div></div>
+      <p class="note">Sem restrição alimentar. Todos os cafés têm saída; a Caputina sai menos por ser a única que a restrição elimina.</p></div>
+    <div class="box"><h2 style="font-size:15px;margin-bottom:2mm">Para quem é vegano ou intolerante à lactose</h2><div class="bars">
+      <div><span style="width:22mm">Espresso</span><span class="b" style="--c:#EA4335;width:98.69999999999999px"></span>32,9%</div>
+      <div><span style="width:22mm">Cappuccino</span><span class="b" style="--c:#4285F4;width:72.9px"></span>24,3%</div>
+      <div><span style="width:22mm">Cumaru Latte</span><span class="b" style="--c:#34A853;width:69.0px"></span>23,0%</div>
+      <div><span style="width:22mm">Macchiato</span><span class="b" style="--c:#F9AB00;width:59.400000000000006px"></span>19,8%</div></div>
+      <p class="note">Cappuccino, Macchiato e Cumaru têm versão vegetal. O Espresso não leva leite.</p></div>
+  </div>
+  <div class="foot"><span>Google for Education · Higher Education · São Paulo</span><span>3 / 3</span></div>
+</div></body></html>
