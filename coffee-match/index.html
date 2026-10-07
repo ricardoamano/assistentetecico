@@ -260,7 +260,7 @@ const UI = {
        startP:'Conte um pouco sobre você e descubra qual café do Café Por Elas combina com a sua personalidade.',
        go:'COMEÇAR', back:'Voltar',
        dietT:'Antes do match…', dietP:'Queremos que seu café seja o match perfeito para você. Selecione a opção que se aplica:',
-       diet:['Sou intolerante à lactose','Sou vegano(a)','Os dois','Nenhuma das opções'],
+       diet:['Sou intolerante à lactose','Sou vegana(o)','Os dois','Nenhuma das opções'],
        trT:'Agora é sobre você.', trP:'Escolha as 3 características que mais combinam com a sua personalidade.',
        cnt:'Escolhidas', find:'DESCOBRIR MEU MATCH', think:'O Gemini está calculando sua personalidade…',
        kick:'SEU COFFEE MATCH É', show:'Mostre esta tela ao barista', again:'Jogar de novo', recipe:'Receita', profile:'Perfil' },
@@ -282,83 +282,83 @@ const UI = {
        kick:'TU COFFEE MATCH ES', show:'Muestra esta pantalla al barista', again:'Jugar de nuevo', recipe:'Receta', profile:'Perfil' }
 };
 
-/* 25 palavras da nuvem → café (5 por café). Mapeamento SUGERIDO a partir dos "perfis associados" do deck — validar com o cliente. */
+/* 25 palavras da nuvem → café (5 por café). Mapeamento = "perfis associados" do deck (5 por café). AUTÊNTICA conta para Espresso e Cumaru (aparece nos dois perfis); DESCOMPLICADA vai para Espresso (match parecido). Validar com o cliente. */
 const WORDS = [
  // id, café, [en, pt, es]
- ['intense','esp',['Intense','Intenso(a)','Intenso/a']],
- ['determined','esp',['Determined','Decidido(a)','Decidido/a']],
+ ['intense','esp',['Intense','Intensa(o)','Intenso/a']],
+ ['determined','esp',['Determined','Decidida(o)','Decidido/a']],
  ['confident','esp',['Confident','Confiante','Seguro/a']],
- ['practical','esp',['Practical','Prático(a)','Práctico/a']],
- ['uncomplicated','esp',['Uncomplicated','Descomplicado(a)','Sin complicaciones']],
- ['welcoming','cap',['Welcoming','Acolhedor(a)','Acogedor/a']],
- ['classic','cap',['Classic','Clássico(a)','Clásico/a']],
- ['calm','cap',['Calm','Tranquilo(a)','Tranquilo/a']],
- ['balanced','cap',['Balanced','Equilibrado(a)','Equilibrado/a']],
- ['passionate','cap',['Passionate','Apaixonado(a)','Apasionado/a']],
- ['sophisticated','mac',['Sophisticated','Sofisticado(a)','Sofisticado/a']],
+ ['practical','esp',['Practical','Prática(o)','Práctico/a']],
+ ['uncomplicated','esp',['Uncomplicated','Descomplicada(o)','Sin complicaciones']],
+ ['welcoming','cap',['Welcoming','Acolhedora(o)','Acogedor/a']],
+ ['classic','cap',['Classic','Clássica(o)','Clásico/a']],
+ ['calm','cap',['Calm','Tranquila(o)','Tranquilo/a']],
+ ['balanced','cap',['Balanced','Equilibrada(o)','Equilibrado/a']],
+ ['passionate','cap',['Passionate','Apaixonada(o)','Apasionado/a']],
+ ['sophisticated','mac',['Sophisticated','Sofisticada(o)','Sofisticado/a']],
  ['elegant','mac',['Elegant','Elegante','Elegante']],
- ['observant','mac',['Observant','Observador(a)','Observador/a']],
+ ['observant','mac',['Observant','Observadora(o)','Observador/a']],
  ['independent','mac',['Independent','Independente','Independiente']],
- ['delicate','mac',['Delicate','Delicado(a)','Delicado/a']],
- ['creative','cum',['Creative','Criativo(a)','Creativo/a']],
- ['curious','cum',['Curious','Curioso(a)','Curioso/a']],
+ ['delicate','mac',['Delicate','Delicada(o)','Delicado/a']],
+ ['creative','cum',['Creative','Criativa(o)','Creativo/a']],
+ ['curious','cum',['Curious','Curiosa(o)','Curioso/a']],
  ['original','cum',['Original','Original','Original']],
- ['adventurous','cum',['Adventurous','Aventureiro(a)','Aventurero/a']],
- ['authentic','cum',['Authentic','Autêntico(a)','Auténtico/a']],
- ['bold','cpt',['Bold','Ousado(a)','Atrevido/a']],
- ['spontaneous','cpt',['Spontaneous','Espontâneo(a)','Espontáneo/a']],
- ['fun','cpt',['Fun','Divertido(a)','Divertido/a']],
+ ['adventurous','cum',['Adventurous','Aventureira(o)','Aventurero/a']],
+ ['authentic',['esp','cum'],['Authentic','Autêntica(o)','Auténtico/a']],
+ ['bold','cpt',['Bold','Ousada(o)','Atrevido/a']],
+ ['spontaneous','cpt',['Spontaneous','Espontânea(o)','Espontáneo/a']],
+ ['fun','cpt',['Fun','Divertida(o)','Divertido/a']],
  ['surprising','cpt',['Surprising','Surpreendente','Sorprendente']],
- ['energetic','cpt',['Energetic','Enérgico(a)','Enérgico/a']]
+ ['energetic','cpt',['Energetic','Enérgica(o)','Enérgico/a']]
 ];
 /* ordem visual embaralhada (misturar cafés na grade) */
 const ORDER = [0,5,10,15,20, 11,21,1,6,16, 17,2,22,12,7, 8,13,18,3,23, 24,4,9,14,19];
 
 const COFFEES = {
   esp:{ color:'#EA4335', vegan:false, name:{en:'Espresso',pt:'Espresso',es:'Espresso'},
-    head:{pt:'Você é <em>intenso(a), decidido(a) e autêntico(a).</em>',en:'You are <em>intense, determined and authentic.</em>',es:'Eres <em>intenso/a, decidido/a y auténtico/a.</em>'},
+    head:{pt:'Você é <em>intensa(o), decidida(o) e autêntica(o).</em>',en:'You are <em>intense, determined and authentic.</em>',es:'Eres <em>intenso/a, decidido/a y auténtico/a.</em>'},
     desc:{pt:'Sabe o que quer, valoriza objetividade e não precisa de muitos rodeios. Tem presença e encara a rotina com energia.',
           en:'You know what you want, value directness and don’t need much fuss. You have presence and take on your routine with energy.',
           es:'Sabes lo que quieres, valoras la practicidad y no necesitas rodeos. Tienes presencia y enfrentas la rutina con energía.'},
     tag:{pt:'Um café direto, marcante e cheio de personalidade — como você.',en:'A direct, striking coffee full of personality — just like you.',es:'Un café directo, contundente y lleno de personalidad, como tú.'},
     rec:{pt:['1 dose de espresso de café especial'],en:['1 shot of specialty espresso'],es:['1 dosis de espresso de café especial']},
     note:{pt:'Sem leite na receita.',en:'No milk in the recipe.',es:'Sin leche en la receta.'},
-    prof:{pt:['INTENSO(A)','DECIDIDO(A)','PRÁTICO(A)','CONFIANTE','AUTÊNTICO(A)'],en:['INTENSE','DETERMINED','PRACTICAL','CONFIDENT','AUTHENTIC'],es:['INTENSO/A','DECIDIDO/A','PRÁCTICO/A','SEGURO/A','AUTÉNTICO/A']} },
+    prof:{pt:['INTENSA(O)','DECIDIDA(O)','PRÁTICA(O)','CONFIANTE','AUTÊNTICA(O)'],en:['INTENSE','DETERMINED','PRACTICAL','CONFIDENT','AUTHENTIC'],es:['INTENSO/A','DECIDIDO/A','PRÁCTICO/A','SEGURO/A','AUTÉNTICO/A']} },
   cap:{ color:'#4285F4', vegan:true, name:{en:'Cappuccino',pt:'Cappuccino',es:'Cappuccino'},
-    head:{pt:'Você é <em>acolhedor(a), equilibrado(a) e clássico(a).</em>',en:'You are <em>welcoming, balanced and classic.</em>',es:'Eres <em>acogedor/a, equilibrado/a y clásico/a.</em>'},
+    head:{pt:'Você é <em>acolhedora(o), equilibrada(o) e clássica(o).</em>',en:'You are <em>welcoming, balanced and classic.</em>',es:'Eres <em>acogedor/a, equilibrado/a y clásico/a.</em>'},
     desc:{pt:'Gosta de boas combinações, valoriza conforto e acredita que os melhores momentos são aqueles que fazem a gente se sentir em casa.',
           en:'You like good combinations, value comfort and believe the best moments are the ones that make us feel at home.',
           es:'Te gustan las buenas combinaciones, valoras la comodidad y crees que los mejores momentos son los que nos hacen sentir en casa.'},
     tag:{pt:'Equilibrado e acolhedor, é companhia certeira para qualquer momento.',en:'Balanced and cozy, a sure companion for any moment.',es:'Equilibrado y acogedor, compañía segura para cualquier momento.'},
     rec:{pt:['1 dose de espresso','Leite vaporizado','Espuma de leite'],en:['1 shot of espresso','Steamed milk','Milk foam'],es:['1 dosis de espresso','Leche vaporizada','Espuma de leche']},
     veg:{pt:'Versão vegetal disponível: leite animal substituído por leite vegetal.',en:'Plant-based version available: dairy milk replaced with plant-based milk.',es:'Versión vegetal disponible: leche animal sustituida por leche vegetal.'},
-    prof:{pt:['ACOLHEDOR(A)','CLÁSSICO(A)','TRANQUILO(A)','EQUILIBRADO(A)','APAIXONADO(A)'],en:['WELCOMING','CLASSIC','CALM','BALANCED','PASSIONATE'],es:['ACOGEDOR/A','CLÁSICO/A','TRANQUILO/A','EQUILIBRADO/A','APASIONADO/A']} },
+    prof:{pt:['ACOLHEDORA(O)','CLÁSSICA(O)','TRANQUILA(O)','EQUILIBRADA(O)','APAIXONADA(O)'],en:['WELCOMING','CLASSIC','CALM','BALANCED','PASSIONATE'],es:['ACOGEDOR/A','CLÁSICO/A','TRANQUILO/A','EQUILIBRADO/A','APASIONADO/A']} },
   mac:{ color:'#FBBC04', vegan:true, name:{en:'Macchiato',pt:'Macchiato',es:'Macchiato'},
-    head:{pt:'Você é <em>sofisticado(a), independente e observador(a).</em>',en:'You are <em>sophisticated, independent and observant.</em>',es:'Eres <em>sofisticado/a, independiente y observador/a.</em>'},
+    head:{pt:'Você é <em>sofisticada(o), independente e observadora(o).</em>',en:'You are <em>sophisticated, independent and observant.</em>',es:'Eres <em>sofisticado/a, independiente y observador/a.</em>'},
     desc:{pt:'Tem personalidade própria, aprecia os detalhes e sabe que contrastes interessantes podem criar combinações surpreendentes.',
           en:'You have a personality of your own, appreciate the details and know that interesting contrasts can create surprising combinations.',
           es:'Tienes personalidad propia, aprecias los detalles y sabes que los contrastes interesantes pueden crear combinaciones sorprendentes.'},
     tag:{pt:'Personalidade e delicadeza na medida certa.',en:'Personality and delicacy in just the right measure.',es:'Personalidad y delicadeza en su justa medida.'},
     rec:{pt:['1 dose de espresso','1 colherada de espuma de leite'],en:['1 shot of espresso','1 spoonful of milk foam'],es:['1 dosis de espresso','1 cucharada de espuma de leche']},
     veg:{pt:'Versão vegetal disponível: espuma feita com leite vegetal.',en:'Plant-based version available: foam made with plant-based milk.',es:'Versión vegetal disponible: espuma de leche vegetal.'},
-    prof:{pt:['SOFISTICADO(A)','ELEGANTE','OBSERVADOR(A)','INDEPENDENTE','DELICADO(A)'],en:['SOPHISTICATED','ELEGANT','OBSERVANT','INDEPENDENT','DELICATE'],es:['SOFISTICADO/A','ELEGANTE','OBSERVADOR/A','INDEPENDIENTE','DELICADO/A']} },
+    prof:{pt:['SOFISTICADA(O)','ELEGANTE','OBSERVADORA(O)','INDEPENDENTE','DELICADA(O)'],en:['SOPHISTICATED','ELEGANT','OBSERVANT','INDEPENDENT','DELICATE'],es:['SOFISTICADO/A','ELEGANTE','OBSERVADOR/A','INDEPENDIENTE','DELICADO/A']} },
   cum:{ color:'#34A853', vegan:true, name:{en:'Cumaru Latte',pt:'Cumaru Latte',es:'Cumaru Latte'},
-    head:{pt:'Você é <em>criativo(a), curioso(a) e original.</em>',en:'You are <em>creative, curious and original.</em>',es:'Eres <em>creativo/a, curioso/a y original.</em>'},
+    head:{pt:'Você é <em>criativa(o), curiosa(o) e original.</em>',en:'You are <em>creative, curious and original.</em>',es:'Eres <em>creativo/a, curioso/a y original.</em>'},
     desc:{pt:'Gosta de descobrir coisas novas, valoriza autenticidade e sempre encontra um jeito de colocar sua personalidade nas suas escolhas.',
           en:'You love discovering new things, value authenticity and always find a way to put your personality into your choices.',
           es:'Te gusta descubrir cosas nuevas, valoras la autenticidad y siempre encuentras la forma de poner tu personalidad en tus elecciones.'},
     tag:{pt:'Um encontro entre café e brasilidade para quem gosta de sair do óbvio.',en:'Where coffee meets Brazilian flavor, for those who like to go beyond the obvious.',es:'Un encuentro entre café y brasilidad para quienes les gusta salir de lo obvio.'},
     rec:{pt:['1 dose de espresso','Leite vaporizado','Xarope artesanal de cumaru'],en:['1 shot of espresso','Steamed milk','Artisanal cumaru syrup'],es:['1 dosis de espresso','Leche vaporizada','Almíbar artesanal de cumarú']},
     veg:{pt:'Versão vegetal disponível: leite animal substituído por leite vegetal.',en:'Plant-based version available: dairy milk replaced with plant-based milk.',es:'Versión vegetal disponible: leche animal sustituida por leche vegetal.'},
-    prof:{pt:['CRIATIVO(A)','CURIOSO(A)','ORIGINAL','AVENTUREIRO(A)','AUTÊNTICO(A)'],en:['CREATIVE','CURIOUS','ORIGINAL','ADVENTUROUS','AUTHENTIC'],es:['CREATIVO/A','CURIOSO/A','ORIGINAL','AVENTURERO/A','AUTÉNTICO/A']} },
+    prof:{pt:['CRIATIVA(O)','CURIOSA(O)','ORIGINAL','AVENTUREIRA(O)','AUTÊNTICA(O)'],en:['CREATIVE','CURIOUS','ORIGINAL','ADVENTUROUS','AUTHENTIC'],es:['CREATIVO/A','CURIOSO/A','ORIGINAL','AVENTURERO/A','AUTÉNTICO/A']} },
   cpt:{ color:'#EA4335', vegan:false, name:{en:'Caputina',pt:'Caputina',es:'Caputina'},
-    head:{pt:'Você é <em>ousado(a), espontâneo(a) e surpreendente.</em>',en:'You are <em>bold, spontaneous and surprising.</em>',es:'Eres <em>atrevido/a, espontáneo/a y sorprendente.</em>'},
+    head:{pt:'Você é <em>ousada(o), espontânea(o) e surpreendente.</em>',en:'You are <em>bold, spontaneous and surprising.</em>',es:'Eres <em>atrevido/a, espontáneo/a y sorprendente.</em>'},
     desc:{pt:'Gosta de experimentar, não tem medo do diferente e acredita que sair do esperado deixa tudo mais interessante.',
           en:'You like to experiment, aren’t afraid of the different and believe that going beyond the expected makes everything more interesting.',
           es:'Te gusta experimentar, no le temes a lo diferente y crees que salir de lo esperado hace todo más interesante.'},
     tag:{pt:'Refrescante, inesperada e feita para quem gosta de uma surpresa.',en:'Refreshing, unexpected and made for those who love a surprise.',es:'Refrescante, inesperada y hecha para quienes disfrutan de una sorpresa.'},
     rec:{pt:['Cold brew','Leite texturizado','Xarope levemente doce'],en:['Cold brew','Textured milk','Lightly sweet syrup'],es:['Cold brew','Leche texturizada','Almíbar ligeramente dulce']},
-    prof:{pt:['OUSADO(A)','ESPONTÂNEO(A)','DIVERTIDO(A)','SURPREENDENTE','ENÉRGICO(A)'],en:['BOLD','SPONTANEOUS','FUN','SURPRISING','ENERGETIC'],es:['ATREVIDO/A','ESPONTÁNEO/A','DIVERTIDO/A','SORPRENDENTE','ENÉRGICO/A']} }
+    prof:{pt:['OUSADA(O)','ESPONTÂNEA(O)','DIVERTIDA(O)','SURPREENDENTE','ENÉRGICA(O)'],en:['BOLD','SPONTANEOUS','FUN','SURPRISING','ENERGETIC'],es:['ATREVIDO/A','ESPONTÁNEO/A','DIVERTIDO/A','SORPRENDENTE','ENÉRGICO/A']} }
 };
 /* Caputina não pode ser servida a vegano/intolerante. Se a pessoa cair nela, o jogo oferece o próximo melhor match (ou Cumaru Latte). */
 const FALLBACK = 'cum';
@@ -464,7 +464,7 @@ function buildCloud(){
 /* ---------- cálculo do match ---------- */
 function match(){
   const score={esp:0,cap:0,mac:0,cum:0,cpt:0};
-  S.picks.forEach((wi,i)=>{ score[WORDS[wi][1]] += 1 + (2-i)*0.01; });   // desempate: primeira escolha pesa um pouco mais
+  S.picks.forEach((wi,i)=>{ [].concat(WORDS[wi][1]).forEach(k=>{ score[k] += 1 + (2-i)*0.01; }); });   // desempate: primeira escolha pesa um pouco mais
   const restricted = S.diet && S.diet!=='none';
   if(restricted) delete score.cpt;
   const best = Object.entries(score).sort((a,b)=>b[1]-a[1])[0];

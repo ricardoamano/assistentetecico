@@ -1,6 +1,6 @@
 /* Service worker: guarda o jogo no tablet para funcionar sem internet.
    Ao publicar uma nova versão, aumente o número em VERSION. */
-const VERSION = 'coffee-match-v2';
+const VERSION = 'coffee-match-v3';
 const FILES = ['./', './index.html', './manifest.webmanifest', './fonts/GoogleSans-Variable.woff2', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
