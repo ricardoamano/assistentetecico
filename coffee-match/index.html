@@ -214,7 +214,7 @@
     <div class="title">
       <h1 id="t-traits"></h1><p class="lead" id="p-traits"></p><div class="bar"></div>
     </div>
-    <div class="count"><span id="cnt-lbl"></span><div class="pips"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="count"><span id="cnt-lbl"></span><div class="pips"><i></i><i></i><i></i></div></div>
     <div class="cloud" id="cloud"></div>
     <div class="cta" id="cta"><button class="btn" id="b-go"></button></div>
   </section>
@@ -263,7 +263,7 @@ const UI = {
        go:'COMEÇAR', back:'Voltar',
        dietT:'Antes do match…', dietP:'Queremos que seu café seja o match perfeito para você. Selecione a opção que se aplica:',
        diet:['Sou intolerante à lactose','Sou vegana (o)','Os dois','Nenhuma das opções'],
-       trT:'Agora é sobre você.', trP:'Escolha as 5 características que mais combinam com a sua personalidade.',
+       trT:'Agora é sobre você.', trP:'Escolha as 3 características que mais combinam com a sua personalidade.',
        cnt:'Escolhidas', find:'DESCOBRIR MEU MATCH', think:'O Gemini está calculando sua personalidade…',
        kick:'SEU COFFEE MATCH É', show:'Mostre esta tela ao barista', again:'Jogar de novo', recipe:'Receita', profile:'Perfil' },
   en:{ start:'Which coffee is a match for you?',
@@ -271,7 +271,7 @@ const UI = {
        go:'START', back:'Back',
        dietT:'Before the match…', dietP:'We want your coffee to be a perfect match for you. Select the option that applies:',
        diet:['I am lactose intolerant','I am vegan','Both of the above','None of the above'],
-       trT:'Now it’s about you.', trP:'Choose the 5 traits that best match your personality.',
+       trT:'Now it’s about you.', trP:'Choose the 3 traits that best match your personality.',
        cnt:'Selected', find:'DISCOVER MY MATCH', think:'Gemini is calculating your personality…',
        kick:'YOUR COFFEE MATCH IS', show:'Show this screen to the barista', again:'Play again', recipe:'Recipe', profile:'Profile' },
   es:{ start:'¿Qué café es tu match?',
@@ -279,19 +279,19 @@ const UI = {
        go:'COMENZAR', back:'Volver',
        dietT:'Antes del match…', dietP:'Queremos que tu café sea el match perfecto para ti. Selecciona la opción que aplique:',
        diet:['Soy intolerante a la lactosa','Soy vegano/a','Ambas','Ninguna de las anteriores'],
-       trT:'Ahora se trata de ti.', trP:'Elige las 5 características que mejor combinan con tu personalidad.',
+       trT:'Ahora se trata de ti.', trP:'Elige las 3 características que mejor combinan con tu personalidad.',
        cnt:'Elegidas', find:'DESCUBRIR MI MATCH', think:'Gemini está calculando tu personalidad…',
        kick:'TU COFFEE MATCH ES', show:'Muestra esta pantalla al barista', again:'Jugar de nuevo', recipe:'Receta', profile:'Perfil' }
 };
 
-/* 25 palavras da nuvem → café (5 por café). Mapeamento = "perfis associados" do deck (5 por café). AUTÊNTICA conta para Espresso e Cumaru (aparece nos dois perfis); DESCOMPLICADA vai para Espresso (match parecido). Validar com o cliente. */
+/* 25 palavras da nuvem → café (5 por café). Mapeamento = "perfis associados" do deck (5 por café). AUTÊNTICA conta para Espresso e Cumaru (aparece nos dois perfis); DESCOMPLICADA (fora dos perfis do deck) vai para Macchiato ("elegância sem esforço"; equilibra a distribuição). Validar com o cliente. */
 const WORDS = [
  // id, café, [en, pt, es]
  ['intense','esp',['Intense','Intensa (o)','Intenso/a']],
  ['determined','esp',['Determined','Decidida (o)','Decidido/a']],
  ['confident','esp',['Confident','Confiante','Seguro/a']],
  ['practical','esp',['Practical','Prática (o)','Práctico/a']],
- ['uncomplicated','esp',['Uncomplicated','Descomplicada (o)','Sin complicaciones']],
+ ['uncomplicated','mac',['Uncomplicated','Descomplicada (o)','Sin complicaciones']],
  ['welcoming','cap',['Welcoming','Acolhedora (o)','Acogedor/a']],
  ['classic','cap',['Classic','Clássica (o)','Clásico/a']],
  ['calm','cap',['Calm','Tranquila (o)','Tranquilo/a']],
@@ -362,8 +362,6 @@ const COFFEES = {
     rec:{pt:['Cold brew','Leite texturizado','Xarope levemente doce'],en:['Cold brew','Textured milk','Lightly sweet syrup'],es:['Cold brew','Leche texturizada','Almíbar ligeramente dulce']},
     prof:{pt:['OUSADA (O)','ESPONTÂNEA (O)','DIVERTIDA (O)','SURPREENDENTE','ENÉRGICA (O)'],en:['BOLD','SPONTANEOUS','FUN','SURPRISING','ENERGETIC'],es:['ATREVIDO/A','ESPONTÁNEO/A','DIVERTIDO/A','SORPRENDENTE','ENÉRGICO/A']} }
 };
-/* Caputina não pode ser servida a vegano/intolerante. Se a pessoa cair nela, o jogo oferece o próximo melhor match (ou Cumaru Latte). */
-const FALLBACK = 'cum';
 
 /* ---------- ilustrações dos copos (arte enviada pelo cliente, PNG/WebP com fundo transparente) ---------- */
 const cup=k=>`<img src="img/cup-${k}.webp" alt="" draggable="false">`;
@@ -446,23 +444,29 @@ function buildCloud(){
   document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{
     const wi=+c.dataset.w, at=S.picks.indexOf(wi);
     if(at>=0){ S.picks.splice(at,1); c.classList.remove('sel'); }
-    else if(S.picks.length<5){ S.picks.push(wi); c.classList.add('sel'); }
-    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('dim',S.picks.length===5&&!x.classList.contains('sel')));
+    else if(S.picks.length<3){ S.picks.push(wi); c.classList.add('sel'); }
+    document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('dim',S.picks.length===3&&!x.classList.contains('sel')));
     document.querySelectorAll('.pips i').forEach((p,i)=>p.classList.toggle('on',i<S.picks.length));
-    $('cta').classList.toggle('show',S.picks.length===5);
+    $('cta').classList.toggle('show',S.picks.length===3);
   });
   document.querySelectorAll('.pips i').forEach(p=>p.classList.remove('on'));
   $('cta').classList.remove('show');
 }
 
-/* ---------- cálculo do match ---------- */
+/* ---------- cálculo do match ----------
+   3 palavras → 1 dos 5 cafés. Os 5 perfis do deck são mantidos: cada palavra pertence ao seu café (peso 2).
+   Os cafés formam um "anel" de afinidade: Espresso – Macchiato – Cappuccino – Cumaru Latte – Caputina – (volta ao Espresso).
+   Cada palavra também dá 1 ponto para os 2 cafés vizinhos. Assim, 3 palavras de perfis diferentes caem no café "do meio" (resolve empates).
+   Empate restante: vence o café da primeira palavra tocada, depois o da segunda, depois o da terceira. */
+const RING = ['esp','mac','cap','cum','cpt'];
 function match(){
-  const score={esp:0,cap:0,mac:0,cum:0,cpt:0};
-  S.picks.forEach((wi,i)=>{ [].concat(WORDS[wi][1]).forEach(k=>{ score[k] += 1 + (4-i)*0.01; }); });   // desempate: primeira escolha pesa um pouco mais
-  const restricted = S.diet && S.diet!=='none';
-  if(restricted) delete score.cpt;
-  const best = Object.entries(score).sort((a,b)=>b[1]-a[1])[0];
-  return (best && best[1]>0) ? best[0] : FALLBACK;
+  const score={esp:0,mac:0,cap:0,cum:0,cpt:0};
+  S.picks.forEach(wi=>{ [].concat(WORDS[wi][1]).forEach(k=>{
+    score[k]+=2; const i=RING.indexOf(k); score[RING[(i+1)%5]]+=1; score[RING[(i+4)%5]]+=1; }); });
+  if(S.diet && S.diet!=='none') delete score.cpt;        // Caputina não é servida a vegano / intolerante à lactose
+  const order=[]; S.picks.forEach(wi=>[].concat(WORDS[wi][1]).forEach(k=>{ if(!order.includes(k)) order.push(k); }));
+  const rank=k=>{ const i=order.indexOf(k); return i<0?99:i; };
+  return Object.keys(score).sort((x,y)=> score[y]-score[x] || rank(x)-rank(y))[0];
 }
 
 /* ---------- resultado ---------- */
