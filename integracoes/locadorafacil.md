@@ -167,3 +167,8 @@ Os botões de IA do LocadoraFácil agora exibem uma frase pronta + "Copiar". Esp
 - "Nestor, cadastre esta lista de itens…" → `bridge_cadastrar_item` por linha.
 - "Nestor, anote no banco de preços: <empresa> cobra R$ <valor>…" → `INSERT INTO "PrecoMercado"` (ver colunas).
 - "Nestor, orçamento para <cliente>, evento <nome>, de <data> a <data>: <itens>." → `bridge_criar_orcamento`.
+
+## PDF do orçamento — parâmetros da rota pública (08/10/2026)
+`/imprimir/<id>?token=…&template=classico|moderno&valores=item|resumido|categoria`
+- `valores=item`: coluna de subtotal por item · `resumido`: só o subtotal da sala · **`categoria`**: itens agrupados por
+  categoria com subtotal por categoria (sem valor por item). Perguntar ao Ricardo qual modo, como já faz com o template.
