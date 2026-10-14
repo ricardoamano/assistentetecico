@@ -53,6 +53,13 @@ DEV/Informativo, sem financeiro, biblioteca, secretário). A tabela `nestor.grup
 - ⚠️ Token do nestor-ops apareceu num print em 2026-10-04: pedir ao Ricardo para trocar (apagar
   `/opt/neostore/segredos/nestor-ops.token`, rodar `ops/instalar.sh`, atualizar `NESTOR_OPS_TOKEN` no ambiente).
 
+## Materiais visuais (regras fixas do Ricardo, 2026-10)
+- **Logo**: usar só os arquivos oficiais (`neostore-website/public/logo-light.png`, `logo-dark.png`, `symbol.png`).
+  Nunca recriar, redesenhar nem mudar proporção entre ícone, "neostore" e "tecnologia para eventos".
+- **Assinatura comercial**: "Neostore Tecnologia para Eventos" (rodapés, cartões, apresentações).
+  "Neostore Soluções para Eventos Ltda." só como razão social / CNPJ / documentos jurídicos.
+- Design system Neostore: Manrope (sem JetBrains Mono), teal #1F6E78, roxo #4A1F4F.
+
 ## Destravar o bridge daqui (nestor-ops)
 Serviço `ops/nestor-ops.js` na VPS (PM2 `nestor-ops`, 127.0.0.1:3099, nginx em `https://nestor.neostore.app/ops/`).
 Só ações fixas, cabeçalho `x-ops-token` = variável de ambiente `NESTOR_OPS_TOKEN` desta nuvem
