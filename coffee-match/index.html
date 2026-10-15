@@ -36,6 +36,9 @@
   .foot{position:absolute;left:56px;right:56px;bottom:30px;display:flex;justify-content:space-between;
     font-size:15px;color:var(--ink2);z-index:5}
   .foot b{color:var(--ink);font-weight:600}
+  #off{position:absolute;right:56px;bottom:30px;font-size:14px;z-index:5;opacity:0;transition:opacity .3s;color:#5f6368}
+  #off.ok{color:#137333} #off.wait{color:#b06000}
+  body.on-lang #off{opacity:1}
   .back{position:absolute;right:56px;top:36px;z-index:6;height:48px;padding:0 22px;border-radius:24px;border:2px solid var(--line);
     background:#fff;font:600 17px var(--font);color:var(--ink2);display:flex;align-items:center;gap:8px;cursor:pointer}
   .back:active{background:#f1f3f4}
@@ -174,6 +177,7 @@
   <button class="back" id="back" style="display:none"></button>
   <div class="dots" id="dots" style="display:none"><i></i><i></i><i></i><i></i><i></i></div>
   <div class="foot"><span id="f1"></span></div>
+  <div id="off" class="wait"></div>
 
   <!-- 1 · IDIOMA -->
   <section class="screen active" id="s-lang">
@@ -404,6 +408,7 @@ function go(id){
   [...$('dots').children].forEach((d,i)=>{ d.className = i<idx-1?'done': i===idx-1?'on':''; });
   $('logo').style.opacity = id==='s-lang'?0:1;
   document.querySelector('.foot').style.opacity = id==='s-result'?0:1;
+  document.body.classList.toggle('on-lang', id==='s-lang');
   armIdle();
 }
 function armIdle(){
@@ -505,7 +510,34 @@ $('sp-think').innerHTML=SPARK(120);
 $('cups').innerHTML=['esp','cap','mac','cum','cpt'].map(cup).join('');
 applyLang('pt',true);
 go('s-lang');
-if('serviceWorker' in navigator) addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+/* ---------- offline: registro do service worker, selo "Offline pronto" e atualização automática ---------- */
+const OFFLINE_FILES=['./index.html','./manifest.webmanifest','./fonts/GoogleSans-Variable.woff2','./img/cup-esp.webp','./img/cup-cap.webp','./img/cup-mac.webp','./img/cup-cum.webp','./img/cup-cpt.webp'];
+async function offlineReady(){
+  try{ if(!('caches' in window)) return false;
+    const r=await Promise.all(OFFLINE_FILES.map(f=>caches.match(f,{ignoreSearch:true}))); return r.every(Boolean); }catch(e){ return false; }
+}
+async function paintOffline(){
+  const ok=await offlineReady(); const el=$('off');
+  el.textContent = ok ? 'Offline pronto ✓' : 'Preparando modo offline…';
+  el.className = ok ? 'ok' : 'wait';
+  if(!ok) setTimeout(paintOffline,2000);
+}
+if('serviceWorker' in navigator){
+  const had=!!navigator.serviceWorker.controller;
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js').then(()=>setTimeout(paintOffline,800)).catch(()=>{}));
+  // nova versão instalada: recarrega sozinho, mas só na tela de idioma (nunca no meio do jogo)
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!had) return;
+    const tryReload=()=>{ if($('s-lang').classList.contains('active')) location.reload(); else setTimeout(tryReload,5000); };
+    tryReload();
+  });
+}
+paintOffline();
+
+/* mantém a tela do tablet acesa durante o uso */
+let wl=null;
+async function keepAwake(){ try{ if('wakeLock' in navigator && document.visibilityState==='visible'){ wl=await navigator.wakeLock.request('screen'); } }catch(e){} }
+document.addEventListener('visibilitychange',keepAwake); addEventListener('pointerdown',()=>{ if(!wl||wl.released) keepAwake(); },{passive:true}); keepAwake();
 </script>
 </body>
 </html>
